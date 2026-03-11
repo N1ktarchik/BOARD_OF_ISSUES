@@ -60,8 +60,7 @@ func (h *UserHandler) HandleCreateUser(w http.ResponseWriter, r *http.Request) {
 		TokenType:   "Bearer",
 	}
 
-	resp, _ := json.Marshal(accesToken)
-	RespondWithJSON(w, http.StatusCreated, resp)
+	RespondWithJSON(w, http.StatusCreated, accesToken)
 
 }
 
@@ -100,7 +99,7 @@ func (h *UserHandler) HandleLoginUser(w http.ResponseWriter, r *http.Request) {
 
 		default:
 
-			RespondWithError(w, http.StatusInternalServerError, "error to registrate user")
+			RespondWithError(w, http.StatusInternalServerError, "error to login user")
 		}
 
 		return
@@ -111,9 +110,7 @@ func (h *UserHandler) HandleLoginUser(w http.ResponseWriter, r *http.Request) {
 		TokenType:   "Bearer",
 	}
 
-	resp, _ := json.Marshal(accesToken)
-
-	RespondWithJSON(w, http.StatusOK, resp)
+	RespondWithJSON(w, http.StatusOK, accesToken)
 
 }
 

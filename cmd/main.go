@@ -17,6 +17,7 @@ func main() {
 
 	db, err := postgres.CreateDB(ctx)
 	if err != nil {
+		//если не надо дб(мок запуск) оставить пустым , если дб подключаем то :
 		//panic(err)
 	}
 
