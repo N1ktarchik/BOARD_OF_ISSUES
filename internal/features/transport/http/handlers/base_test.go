@@ -1,12 +1,20 @@
 package handlers
 
 import (
+	er "Board_of_issuses/internal/core"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
+
+func newErrorApp(code, message string) *er.ErrorApp {
+	return &er.ErrorApp{
+		Code:    code,
+		Message: message,
+	}
+}
 
 func TestHandleBase(t *testing.T) {
 	var handlers = NewUserHandler(nil)

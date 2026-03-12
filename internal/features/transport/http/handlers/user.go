@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"io"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -130,6 +131,11 @@ func (h *UserHandler) HandleChangeUserName(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
+	if len(newName.Name) <= 3 {
+		RespondWithError(w, http.StatusBadRequest, "name can not be less then 3")
+		return
+	}
+
 	if err := h.serv.ChangeUserName(r.Context(), newName.Name, userID); err != nil {
 		RespondWithError(w, http.StatusInternalServerError, "change user name error")
 		return
@@ -153,6 +159,12 @@ func (h *UserHandler) HandleChangeUserEmail(w http.ResponseWriter, r *http.Reque
 	if err := json.Unmarshal(reqBody, newEmail); err != nil {
 		RespondWithError(w, http.StatusInternalServerError, "parse request data error")
 		return
+	}
+
+	if len(newEmail.Email) < 7 || !strings.Contains(newEmail.Email, "@") || !strings.Contains(newEmail.Email, ".") {
+		RespondWithError(w, http.StatusBadRequest, "new email invalid")
+		return
+
 	}
 
 	if err := h.serv.ChangeUserEmail(r.Context(), newEmail.Email, userID); err != nil {
