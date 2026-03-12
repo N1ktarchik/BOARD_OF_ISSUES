@@ -16,6 +16,7 @@ import (
 
 	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"go.uber.org/mock/gomock"
 )
 
@@ -290,5 +291,69 @@ func TestHandleChangeTaskDescription(t *testing.T) {
 }
 
 func TestGetAllTasks(t *testing.T) {
+	ctrl := gomock.NewController(t)
+	defer ctrl.Finish()
+
+	expectedTasks := []dn.Task{
+		{Id: 12, UserId: 123, DeskId: 123, Name: "test1", Description: "testtest1", Done: false},
+		{Id: 1234, UserId: 123, DeskId: 1234, Name: "test2", Description: "testtest2", Done: true},
+	}
+
+	mockService := mocks.NewMockService(ctrl)
+	mockService.EXPECT().
+		GetAllTasks(gomock.Any(), gomock.Any(), gomock.Any()).
+		DoAndReturn(func(ctx context.Context, userID, deskID int) ([]dn.Task, error) {
+			if userID != 123 {
+				return nil, errors.New("user is not owner")
+			}
+			return expectedTasks, nil
+		}).
+		AnyTimes()
+
+	handlers := NewUserHandler(mockService)
+	router := mux.NewRouter()
+	router.HandleFunc("/tasks/{deskId}", handlers.HandleGetAllTasks).Methods("GET")
+
+	requests := []struct {
+		userID int
+		deskID int
+		code   int
+	}{
+		{123, 123, http.StatusOK},
+		{123, 0, http.StatusBadRequest},
+		{123, -1, http.StatusBadRequest},
+		{12, 123, http.StatusInternalServerError},
+	}
+
+	for _, v := range requests {
+
+		url := fmt.Sprintf("/tasks/%d", v.deskID)
+		req := httptest.NewRequest("GET", url, nil)
+		req.Header.Set("Content-Type", "application/json")
+		ctx := context.WithValue(t.Context(), "userID", v.userID)
+		req = req.WithContext(ctx)
+
+		resp := httptest.NewRecorder()
+		router.ServeHTTP(resp, req)
+
+		if !assert.Equal(t, v.code, resp.Code) {
+			msg := resp.Body.String()
+			t.Error(msg)
+			t.Error("test values: ", v)
+		}
+
+		if !assert.Equal(t, v.code, resp.Code) {
+			t.Error("test values: ", v)
+			return
+		}
+
+		if v.code == http.StatusOK {
+			var actualTasks []dn.Task
+			err := json.Unmarshal(resp.Body.Bytes(), &actualTasks)
+			require.NoError(t, err)
+			assert.Equal(t, expectedTasks, actualTasks)
+		}
+
+	}
 
 }

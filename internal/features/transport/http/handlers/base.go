@@ -188,7 +188,7 @@ func (h *UserHandler) HandleBase(w http.ResponseWriter, r *http.Request) {
 
     <div class="endpoint">
         <span class="method get">GET</span>
-        <span class="path">/api/tasks</span>
+        <span class="path">/api/tasks/{deskId}</span>
         <div class="description">Получение всех задач</div>
     </div>
 

@@ -48,7 +48,7 @@ func (s *HTTPServer) StartServer() error {
 	api.Path("/tasks/{id}/complyte").Methods("PATCH").HandlerFunc(s.Handlers.HandleComplyteTask)
 	api.Path("/tasks/{id}/time").Methods("PATCH").HandlerFunc(s.Handlers.HandleAddTimeToTask)
 	api.Path("/tasks/{id}/description").Methods("PATCH").HandlerFunc(s.Handlers.HandleChangeTaskDescription)
-	api.Path("/tasks").Methods("GET").HandlerFunc(s.Handlers.HandleGetAllTasks)
+	api.Path("/tasks/{deskId}").Methods("GET").HandlerFunc(s.Handlers.HandleGetAllTasks)
 	api.Path("/tasks").Methods("GET").Queries("done", "{done}", "desk_id", "{desk_id}").HandlerFunc(s.Handlers.HandleGetTasksWithParams)
 
 	return http.ListenAndServe(":8080", router)

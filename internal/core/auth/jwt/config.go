@@ -25,6 +25,14 @@ func LoadJwtConfig() *ConfigJWT {
 	}
 }
 
+func LoadJwtConfigWithParamSecretKey(secretKey string) *ConfigJWT {
+	return &ConfigJWT{
+		SecretKey: []byte(secretKey),
+		TokenLive: tokenLive,
+		Autor:     autorOfToken,
+	}
+}
+
 func getEnvData(key string) string {
 	return os.Getenv(key)
 }

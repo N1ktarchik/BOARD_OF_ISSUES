@@ -213,7 +213,7 @@ func (h *UserHandler) HandleChangeTaskDescription(w http.ResponseWriter, r *http
 
 func (h *UserHandler) HandleGetAllTasks(w http.ResponseWriter, r *http.Request) {
 	userId := getUserIDFromContext(r)
-	deskID, err := strconv.Atoi(mux.Vars(r)["id"])
+	deskID, err := strconv.Atoi(mux.Vars(r)["deskId"])
 	if err != nil {
 		RespondWithError(w, http.StatusBadRequest, "error to parser desk id")
 		return
