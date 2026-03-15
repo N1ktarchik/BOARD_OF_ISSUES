@@ -52,95 +52,90 @@
 
 API построен на принципах REST. Подробная спецификация с примерами доступна по корневому маршруту `/`.
 
-Да, в README.md нужно поправить описание эндпоинта подключения к доске и примеры. Вот что конкретно:
-
-## 🔍 Что исправить в README.md:
-
-### 1. В разделе "Пользователи" (Authentication & Profile)
-Сейчас там написано:
-```markdown
-* `POST /api/users` — добавление пользователя на доску (по `desk_id`).
-```
-
-Нужно добавить про пароль:
-```markdown
-* `POST /api/users` — подключение пользователя к доске. Требуется `desk_id` и **пароль доски**.
-```
-
-### 2. В разделе "Примеры использования (cURL)"
-Нужно добавить пример подключения к доске:
-
-```markdown
-**8. Подключение к доске**
-
-    curl -X POST http://localhost:8080/api/users \
-      -H "Authorization: Bearer <вставь_свой_токен>" \
-      -H "Content-Type: application/json" \
-      -d '{"desk_id": 1, "password": "пароль_доски"}'
-```
-
-### 3. Если хотите полностью обновить раздел с пользователями
-Вот готовый блок для замены:
-
-Скопируйте этот блок и замените им соответствующий раздел в `README.md`:
-
-```markdown
 ### 👤 Пользователи (Authentication & Profile)
 
-  * **Регистрация:** `POST /register` — создание нового аккаунта.
-    ```json
-    {"name": "Имя", "email": "user@mail.com", "login": "login123", "password": "1234567"}
-    ```
+* **Регистрация:** `POST /register` — создание нового аккаунта.
+  ```json
+  {"name": "Имя", "email": "user@mail.com", "login": "login123", "password": "1234567"}
+  ```
 
-  * **Вход:** `POST /login` — получение JWT-токена.
-    ```json
-    {"email": "user@mail.com", "password": "1234567"} 
-    // или
-    {"login": "login123", "password": "1234567"}
-    ```
+* **Вход:** `POST /login` — получение JWT-токена.
+  ```json
+  {"email": "user@mail.com", "password": "1234567"}
+  ```
+  или
+  ```json
+  {"login": "login123", "password": "1234567"}
+  ```
 
-  * **Управление профилем (требуют `Bearer Token`):**
-    * `PATCH /api/users/name` — смена имени.
-      ```json
-      {"name": "Новое имя"}
-      ```
-    * `PATCH /api/users/email` — смена email.
-      ```json
-      {"email": "new@mail.com"}
-      ```
-    * `PATCH /api/users/password` — смена пароля.
-      ```json
-      {"password": "новый_пароль"}
-      ```
-    * `POST /api/users` — подключение к доске. **Требуется пароль доски!**
-      ```json
-      {
-        "desk_id": 123,
-        "password": "пароль_доски"
-      }
-      ```
-```
+* **Управление профилем (требуют `Bearer Token`):**
+  * `PATCH /api/users/name` — смена имени.
+    ```json
+    {"name": "Новое имя"}
+    ```
+  * `PATCH /api/users/email` — смена email.
+    ```json
+    {"email": "new@mail.com"}
+    ```
+  * `PATCH /api/users/password` — смена пароля.
+    ```json
+    {"password": "новый_пароль"}
+    ```
+  * `POST /api/users` — подключение к доске. **Требуется пароль доски!**
+    ```json
+    {
+      "desk_id": 123,
+      "password": "пароль_доски"
+    }
+    ```
 
 ### 📊 Доски (Desks)
+
 * **Создание:** `POST /api/desks` — новая доска с паролем.
+  ```json
+  {"name": "Моя доска", "password": "123456"}
+  ```
+
 * **Получение:** `GET /api/desks` — список всех досок текущего пользователя.
+
 * **Управление (только владелец):**
   * `PATCH /api/desks/{id}/name` — переименование.
+    ```json
+    {"name": "Новое название"}
+    ```
   * `PATCH /api/desks/{id}/password` — смена пароля доски.
+    ```json
+    {"password": "новый_пароль"}
+    ```
   * `PATCH /api/desks/{id}/owner` — передача прав владельца.
+    ```json
+    {"new_owner_id": 456}
+    ```
   * `DELETE /api/desks/{id}` — удаление доски.
 
 ### ✅ Задачи (Tasks)
+
 * **Базовые операции:**
   * `POST /api/tasks` — создание задачи на конкретной доске.
+    ```json
+    {"title": "Задача", "description": "Описание", "desk_id": 123}
+    ```
   * `GET /api/tasks/{deskId}` — получение всех задач доски.
   * `DELETE /api/tasks/{id}` — удаление задачи.
-* **Фильтрация:** `GET /api/tasks?done=true&desk_id=123` — выборка задач по статусу выполнения.
-* **Редактирование:**
-  * `PATCH /api/tasks/{id}/complyte` — отметить как выполненную.
-  * `PATCH /api/tasks/{id}/time` — добавить часы к задаче (`{"hours": 2}`).
-  * `PATCH /api/tasks/{id}/description` — изменить описание.
 
+* **Фильтрация:** `GET /api/tasks?done=true&desk_id=123` — выборка задач по статусу выполнения.
+
+* **Редактирование:**
+  * `PATCH /api/tasks/{id}/complete` — отметить как выполненную.
+    *(тело запроса не требуется)*
+  * `PATCH /api/tasks/{id}/time` — добавить часы к задаче.
+    ```json
+    {"hours": 2}
+    ```
+  * `PATCH /api/tasks/{id}/description` — изменить описание.
+    ```json
+    {"description": "Новое описание"}
+    ```
 
 ## ⚙️ Установка и запуск (локально)
 
