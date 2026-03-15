@@ -57,14 +57,10 @@ func (c *connect) DeleteUser(ctx context.Context, userId string) error {
 
 	defer tx.Rollback(ctx)
 
-	query := `DELETE FROM deskusers WHERE userid = $1`
+	query := `DELETE FROM desksusers WHERE userid = $1`
 	result, err := tx.Exec(ctx, query, userId)
 	if err != nil {
 		return err
-	}
-
-	if result.RowsAffected() == 0 {
-		return sql.ErrNoRows
 	}
 
 	query = `DELETE FROM users WHERE id = $1`
