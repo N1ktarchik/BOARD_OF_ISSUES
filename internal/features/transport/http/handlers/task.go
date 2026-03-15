@@ -37,7 +37,6 @@ func (h *UserHandler) HandleCreateTask(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	task.Created_at = time.Now()
 	task.UserId = userID
 	task.Done = false
 	if task.Time.IsZero() {

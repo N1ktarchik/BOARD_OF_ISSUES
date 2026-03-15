@@ -8,9 +8,10 @@ import (
 )
 
 func (c *connect) CreateTask(ctx context.Context, task *repo.Task) error {
-	query := `INSERT INTO tasks (userid,deskid,name,description,time) VALUES ($1,$2,$3,$4,$5) `
+	query := `INSERT INTO tasks (userid,deskid,name,description,time) VALUES ($1,$2,$3,$4,$5) RETURNING created_at `
 
-	if _, err := c.db.Exec(ctx, query, task.UserId, task.DeskId, task.Name, task.Description, task.Time); err != nil {
+	err := c.db.QueryRow(ctx, query, task.UserId, task.DeskId, task.Name, task.Description, task.Time).Scan(&task.Created_at)
+	if err != nil {
 		return err
 	}
 
@@ -18,7 +19,7 @@ func (c *connect) CreateTask(ctx context.Context, task *repo.Task) error {
 }
 
 func (c *connect) UpdateTaskDecription(ctx context.Context, id int, description string) error {
-	query := `UPDATE taks SET description = $1 WHERE id = $2 `
+	query := `UPDATE tasks SET description = $1 WHERE id = $2 `
 
 	if _, err := c.db.Exec(ctx, query, description, id); err != nil {
 		return err
@@ -28,7 +29,7 @@ func (c *connect) UpdateTaskDecription(ctx context.Context, id int, description 
 }
 
 func (c *connect) UpdateTaskTime(ctx context.Context, id int, time time.Time) error {
-	query := `UPDATE taks SET time = $1 WHERE id = $2 `
+	query := `UPDATE tasks SET time = $1 WHERE id = $2 `
 
 	if _, err := c.db.Exec(ctx, query, time, id); err != nil {
 		return err
@@ -38,7 +39,7 @@ func (c *connect) UpdateTaskTime(ctx context.Context, id int, time time.Time) er
 }
 
 func (c *connect) UpdateTaskDone(ctx context.Context, id int) error {
-	query := `UPDATE taks SET done = $1 WHERE id = $2 `
+	query := `UPDATE tasks SET done = $1 WHERE id = $2 `
 
 	if _, err := c.db.Exec(ctx, query, true, id); err != nil {
 		return err
@@ -109,7 +110,7 @@ func (c *connect) GetTaskOwner(ctx context.Context, taskID int) (int, error) {
 }
 
 func (c *connect) GetDeskIDByTask(ctx context.Context, taskID int) (int, error) {
-	query := `SELECT dekid FROM tasks WHERE id =$1`
+	query := `SELECT deskid FROM tasks WHERE id =$1`
 
 	var deskid int
 

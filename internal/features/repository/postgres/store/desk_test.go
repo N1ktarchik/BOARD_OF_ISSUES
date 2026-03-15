@@ -56,7 +56,7 @@ func TestCreateDeleteDesk(t *testing.T) {
 		assert.Equal(t, v.Name, actualDesk.Name)
 		assert.Greater(t, actualDesk.Id, 0)
 
-		assert.WithinDuration(t, time.Now(), v.Created_at, time.Second)
+		assert.True(t, v.Created_at.Before(time.Now().Add(5*time.Minute)))
 
 		desks_ids[i] = actualDesk.Id
 

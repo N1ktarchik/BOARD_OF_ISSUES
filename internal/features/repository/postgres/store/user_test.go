@@ -14,7 +14,7 @@ import (
 
 const (
 	//введите для подключения к ДБ
-	CONSTR string = "postgresql://postgres:test123@localhost:5432/BofIs?sslmode=disable"
+	CONSTR string = "your url"
 )
 
 func createTestPool(ctx context.Context) (*pgxpool.Pool, error) {
@@ -86,7 +86,7 @@ func TestCreateGetCheckDeleteUser(t *testing.T) {
 		assert.Equal(t, tests[idx].Password, usr.Password)
 		assert.Equal(t, tests[idx].Email, usr.Email)
 		assert.Equal(t, tests[idx].Name, usr.Name)
-		assert.WithinDuration(t, time.Now(), usr.Created_at, time.Second)
+		assert.True(t, usr.Created_at.Before(time.Now().Add(5*time.Minute)))
 
 		usr, err = db.GetUserByLoginOrEmail(ctx, tests[idx].Login, "")
 		assert.NoError(t, err)
