@@ -2,6 +2,7 @@ package store
 
 import (
 	"context"
+	"database/sql"
 )
 
 func (c *connect) ConnectUserToDesk(ctx context.Context, userID, deskID int) error {
@@ -47,8 +48,14 @@ func (c *connect) GetUserDesks(ctx context.Context, userId int) ([]int, error) {
 func (c *connect) DeleteUserDesk(ctx context.Context, userId, deskId int) error {
 	query := `DELETE FROM desksusers WHERE userid = $1 AND deskid = $2`
 
-	if _, err := c.db.Exec(ctx, query, userId, deskId); err != nil {
+	result, err := c.db.Exec(ctx, query, userId, deskId)
+
+	if err != nil {
 		return err
+	}
+
+	if result.RowsAffected() == 0 {
+		return sql.ErrNoRows
 	}
 
 	return nil

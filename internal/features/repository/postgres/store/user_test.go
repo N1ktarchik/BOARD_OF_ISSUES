@@ -3,8 +3,6 @@ package store
 import (
 	"Board_of_issuses/internal/features/repository"
 	"context"
-	"database/sql"
-	"strconv"
 	"testing"
 	"time"
 
@@ -16,10 +14,10 @@ import (
 
 const (
 	//введите для подключения к ДБ
-	CONSTR string = "your url"
+	CONSTR string = "postgresql://postgres:test123@localhost:5432/BofIs?sslmode=disable"
 )
 
-func createPool(ctx context.Context) (*pgxpool.Pool, error) {
+func createTestPool(ctx context.Context) (*pgxpool.Pool, error) {
 
 	config, err := pgxpool.ParseConfig(CONSTR)
 	if err != nil {
@@ -46,7 +44,7 @@ func TestCreateGetCheckDeleteUser(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	pool, err := createPool(ctx)
+	pool, err := createTestPool(ctx)
 	require.NoError(t, err)
 
 	db := CreateConnectToDB(pool)
@@ -88,6 +86,7 @@ func TestCreateGetCheckDeleteUser(t *testing.T) {
 		assert.Equal(t, tests[idx].Password, usr.Password)
 		assert.Equal(t, tests[idx].Email, usr.Email)
 		assert.Equal(t, tests[idx].Name, usr.Name)
+		assert.WithinDuration(t, time.Now(), usr.Created_at, time.Second)
 
 		usr, err = db.GetUserByLoginOrEmail(ctx, tests[idx].Login, "")
 		assert.NoError(t, err)
@@ -139,16 +138,11 @@ func TestCreateGetCheckDeleteUser(t *testing.T) {
 	value, err = db.CheckUserByEmailOrLogin(ctx, "oiqafd[0PJFWEOo]fqweqw", "qdo]w[pqkf[eqwopfk]ope[jfvwepi]]")
 	assert.False(t, value)
 
-	for idx := range ids {
-		err := db.DeleteUser(ctx, strconv.Itoa(ids[idx]))
+	for _, userId := range ids {
+		query := `DELETE FROM users WHERE id = $1`
+		_, err := db.db.Exec(ctx, query, userId)
 		assert.NoError(t, err)
-
-		_, err = db.GetUserByID(ctx, ids[idx])
-		assert.Equal(t, pgx.ErrNoRows, err)
 	}
-
-	err = db.DeleteUser(ctx, strconv.Itoa(ids[len(ids)-1]+100))
-	assert.Equal(t, sql.ErrNoRows, err)
 
 }
 
@@ -163,7 +157,7 @@ func TestUpdateNameEmailPasswordUser(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
-	pool, err := createPool(ctx)
+	pool, err := createTestPool(ctx)
 	require.NoError(t, err)
 
 	db := CreateConnectToDB(pool)
@@ -206,7 +200,8 @@ func TestUpdateNameEmailPasswordUser(t *testing.T) {
 		assert.Equal(t, newPass, usr.Password)
 		assert.Equal(t, newName, usr.Name)
 
-		err = db.DeleteUser(ctx, strconv.Itoa(ids[idx]))
+		query := `DELETE FROM users WHERE id = $1`
+		_, err = db.db.Exec(ctx, query, ids[idx])
 		assert.NoError(t, err)
 
 	}

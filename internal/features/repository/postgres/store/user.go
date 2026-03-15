@@ -2,17 +2,16 @@ package store
 
 import (
 	"context"
-	"database/sql"
 
 	repo "Board_of_issuses/internal/features/repository"
 )
 
 func (c *connect) CreateUser(ctx context.Context, user *repo.User) (int, error) {
-	query := `INSERT INTO users (login, password, email, name) VALUES ($1, $2, $3, $4) RETURNING id`
+	query := `INSERT INTO users (login, password, email, name) VALUES ($1, $2, $3, $4) RETURNING id, created_at`
 
 	var id int
 
-	if err := c.db.QueryRow(ctx, query, user.Login, user.Password, user.Email, user.Name).Scan(&id); err != nil {
+	if err := c.db.QueryRow(ctx, query, user.Login, user.Password, user.Email, user.Name).Scan(&id, &user.Created_at); err != nil {
 		return 0, err
 	}
 
@@ -45,35 +44,6 @@ func (c *connect) UpdateUserPassword(ctx context.Context, password string, userI
 	if _, err := c.db.Exec(ctx, query, password, userId); err != nil {
 		return err
 	}
-
-	return nil
-}
-
-func (c *connect) DeleteUser(ctx context.Context, userId string) error {
-	tx, err := c.db.Begin(ctx)
-	if err != nil {
-		return err
-	}
-
-	defer tx.Rollback(ctx)
-
-	query := `DELETE FROM desksusers WHERE userid = $1`
-	result, err := tx.Exec(ctx, query, userId)
-	if err != nil {
-		return err
-	}
-
-	query = `DELETE FROM users WHERE id = $1`
-	result, err = tx.Exec(ctx, query, userId)
-	if err != nil {
-		return err
-	}
-
-	if result.RowsAffected() == 0 {
-		return sql.ErrNoRows
-	}
-
-	tx.Commit(ctx)
 
 	return nil
 }

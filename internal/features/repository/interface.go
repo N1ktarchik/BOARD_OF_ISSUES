@@ -10,7 +10,6 @@ type Repository interface {
 	UpdateUserEmail(ctx context.Context, email string, userId int) error
 	UpdateUserName(ctx context.Context, name string, userId int) error
 	UpdateUserPassword(ctx context.Context, password string, userId int) error
-	DeleteUser(ctx context.Context, userId string) error
 	GetUserByID(ctx context.Context, id int) (*User, error)
 	GetUserByLoginOrEmail(ctx context.Context, login, email string) (*User, error)
 	CheckUserByEmailOrLogin(ctx context.Context, login, email string) (bool, error)

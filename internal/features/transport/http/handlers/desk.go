@@ -7,7 +7,6 @@ import (
 	"io"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/gorilla/mux"
 )
@@ -34,7 +33,6 @@ func (h *UserHandler) HandleCreateDesk(w http.ResponseWriter, r *http.Request) {
 	}
 
 	desk.OwnerId = userID
-	desk.Created_at = time.Now()
 
 	if err = h.serv.CreateDesk(r.Context(), desk.ToServiceDeskr()); err != nil {
 		switch {
