@@ -15,7 +15,7 @@ func (c *connect) ConnectUserToDesk(ctx context.Context, userID, deskID int) err
 }
 
 func (c *connect) GetUserDesks(ctx context.Context, userId int) ([]int, error) {
-	query := `SELECT deskid FROM desksuser WHERE userid = $1`
+	query := `SELECT deskid FROM desksusers WHERE userid = $1`
 
 	deskArr := make([]int, 0)
 

@@ -237,6 +237,7 @@ func (h *UserHandler) HandleGetAllDesksId(w http.ResponseWriter, r *http.Request
 	desksID, err := h.serv.GetAllDesks(r.Context(), userID)
 	if err != nil {
 		RespondWithError(w, http.StatusInternalServerError, "error to get desks id")
+		return
 	}
 
 	RespondWithJSON(w, http.StatusOK, desksID)

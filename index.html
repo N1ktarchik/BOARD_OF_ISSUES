@@ -1,0 +1,388 @@
+`<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Board of Issues API</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+            padding-bottom: 10px;
+        }
+        h2 {
+            color: #34495e;
+            margin-top: 30px;
+        }
+        .endpoint {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px 0;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .method {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-right: 10px;
+            min-width: 60px;
+            text-align: center;
+        }
+        .get { background: #61affe; color: white; }
+        .post { background: #49cc90; color: white; }
+        .patch { background: #fca130; color: white; }
+        .delete { background: #f93e3e; color: white; }
+        .path {
+            font-family: monospace;
+            font-size: 1.1em;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+        .description {
+            margin-top: 8px;
+            color: #666;
+            font-size: 0.95em;
+        }
+        .request-body {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 10px;
+            font-family: monospace;
+            font-size: 0.9em;
+            border-left: 3px solid #3498db;
+            white-space: pre-wrap;
+        }
+        .request-body strong {
+            color: #2c3e50;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        }
+        code {
+            background: #f8f9fa;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+        .auth-note {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        .param {
+            font-family: monospace;
+            background: #e9ecef;
+            padding: 2px 4px;
+            border-radius: 3px;
+            color: #d63384;
+        }
+        footer {
+            margin-top: 50px;
+            text-align: center;
+            color: #999;
+            font-size: 0.9em;
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>📋 Board of Issues API</h1>
+    <p>Добро пожаловать в API сервиса управления задачами и досками!</p>
+    
+    <div class="auth-note">
+        <strong>🔐 Аутентификация:</strong> Большинство эндпоинтов требуют Bearer токен в заголовке 
+        <code>Authorization: Bearer &lt;ваш_токен&gt;</code>
+        <br><br>
+        <strong>📌 Формат ответов:</strong> Все ответы приходят в формате JSON. В случае ошибки будет поле <code>{"error": "описание"}</code>.
+    </div>
+
+    <h2>👤 Пользователи</h2>
+    
+    <div class="endpoint">
+        <span class="method post">POST</span>
+        <span class="path">/register</span>
+        <div class="description">Регистрация нового пользователя</div>
+        <div class="request-body">
+            <strong>Тело запроса:</strong> {
+                "name": "Имя",
+                "email": "user@mail.com", 
+                "login": "login123",
+                "password": "1234567"
+            }
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <span class="method post">POST</span>
+        <span class="path">/login</span>
+        <div class="description">Вход в систему. Можно использовать email или логин</div>
+        <div class="request-body">
+            <strong>Вариант 1 (по email):</strong> {
+                "email": "user@mail.com",
+                "password": "1234567"
+            }
+        </div>
+        <div class="request-body">
+            <strong>Вариант 2 (по логину):</strong> {
+                "login": "login123", 
+                "password": "1234567"
+            }
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <span class="method patch">PATCH</span>
+        <span class="path">/api/users/name</span>
+        <div class="description">Изменение имени пользователя (требуется токен)</div>
+        <div class="request-body">
+            <strong>Тело запроса:</strong> {
+                "name": "Новое имя"
+            }
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <span class="method patch">PATCH</span>
+        <span class="path">/api/users/password</span>
+        <div class="description">Изменение пароля (требуется токен)</div>
+        <div class="request-body">
+            <strong>Тело запроса:</strong> {
+                "password": "новый_пароль"
+            }
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <span class="method patch">PATCH</span>
+        <span class="path">/api/users/email</span>
+        <div class="description">Изменение email (требуется токен)</div>
+        <div class="request-body">
+            <strong>Тело запроса:</strong> {
+                "email": "new@mail.com"
+            }
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <span class="method post">POST</span>
+        <span class="path">/api/users</span>
+        <div class="description">Подключение пользователя к доске (требуется токен)</div>
+        <div class="request-body">
+            <strong>Тело запроса:</strong> {
+                "desk_id": 123,
+                "password": "пароль_доски"
+            }
+        </div>
+        <div class="description" style="color: #e67e22; margin-top: 5px;">
+            ⚠️ <strong>Важно:</strong> Пароль доски обязателен для подключения!
+        </div>
+    </div>
+
+    <h2>📊 Доски</h2>
+
+    <div class="endpoint">
+        <span class="method post">POST</span>
+        <span class="path">/api/desks</span>
+        <div class="description">Создание новой доски (требуется токен)</div>
+        <div class="request-body">
+            <strong>Тело запроса:</strong> {
+                "name": "Моя доска",
+                "password": "123456"
+            }
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <span class="method get">GET</span>
+        <span class="path">/api/desks</span>
+        <div class="description">Получение списка всех досок пользователя (требуется токен)</div>
+        <div class="request-body">
+            <strong>Заголовки:</strong> Authorization: Bearer &lt;токен&gt;
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <span class="method patch">PATCH</span>
+        <span class="path">/api/desks/{id}/name</span>
+        <div class="description">Изменение названия доски (только владелец, требуется токен)</div>
+        <div class="request-body">
+            <strong>Параметры пути:</strong> <span class="param">id</span> - идентификатор доски<br>
+            <strong>Тело запроса:</strong> {
+                "name": "Новое название"
+            }
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <span class="method patch">PATCH</span>
+        <span class="path">/api/desks/{id}/password</span>
+        <div class="description">Изменение пароля доски (только владелец, требуется токен)</div>
+        <div class="request-body">
+            <strong>Параметры пути:</strong> <span class="param">id</span> - идентификатор доски<br>
+            <strong>Тело запроса:</strong> {
+                "password": "новый_пароль"
+            }
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <span class="method patch">PATCH</span>
+        <span class="path">/api/desks/{id}/owner</span>
+        <div class="description">Смена владельца доски (только текущий владелец, требуется токен)</div>
+        <div class="request-body">
+            <strong>Параметры пути:</strong> <span class="param">id</span> - идентификатор доски<br>
+            <strong>Тело запроса:</strong> {
+                "new_owner_id": 456
+            }
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <span class="method delete">DELETE</span>
+        <span class="path">/api/desks/{id}</span>
+        <div class="description">Удаление доски (только владелец, требуется токен)</div>
+        <div class="request-body">
+            <strong>Параметры пути:</strong> <span class="param">id</span> - идентификатор доски
+        </div>
+    </div>
+
+    <h2>✅ Задачи</h2>
+
+    <div class="endpoint">
+        <span class="method post">POST</span>
+        <span class="path">/api/tasks</span>
+        <div class="description">Создание задачи (требуется токен)</div>
+        <div class="request-body">
+            <strong>Тело запроса:</strong> {
+                "title": "Задача",
+                "description": "Описание",
+                "desk_id": 123
+            }
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <span class="method get">GET</span>
+        <span class="path">/api/tasks/{deskId}</span>
+        <div class="description">Получение всех задач доски (требуется токен)</div>
+        <div class="request-body">
+            <strong>Параметры пути:</strong> <span class="param">deskId</span> - идентификатор доски
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <span class="method get">GET</span>
+        <span class="path">/api/tasks?done=true&desk_id=123</span>
+        <div class="description">Получение задач с фильтрацией (требуется токен)</div>
+        <div class="request-body">
+            <strong>Параметры запроса:</strong><br>
+            <span class="param">done</span> (опционально): true/false - фильтр по статусу выполнения<br>
+            <span class="param">desk_id</span> (обязательно): идентификатор доски
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <span class="method patch">PATCH</span>
+        <span class="path">/api/tasks/{id}/complete</span>
+        <div class="description">Отметить задачу как выполненную (требуется токен)</div>
+        <div class="request-body">
+            <strong>Параметры пути:</strong> <span class="param">id</span> - идентификатор задачи
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <span class="method patch">PATCH</span>
+        <span class="path">/api/tasks/{id}/time</span>
+        <div class="description">Добавить время к задаче (требуется токен)</div>
+        <div class="request-body">
+            <strong>Параметры пути:</strong> <span class="param">id</span> - идентификатор задачи<br>
+            <strong>Тело запроса:</strong> {
+                "hours": 2
+            }
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <span class="method patch">PATCH</span>
+        <span class="path">/api/tasks/{id}/description</span>
+        <div class="description">Изменить описание задачи (требуется токен)</div>
+        <div class="request-body">
+            <strong>Параметры пути:</strong> <span class="param">id</span> - идентификатор задачи<br>
+            <strong>Тело запроса:</strong> {
+                "description": "Новое описание"
+            }
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <span class="method delete">DELETE</span>
+        <span class="path">/api/tasks/{id}</span>
+        <div class="description">Удаление задачи (требуется токен)</div>
+        <div class="request-body">
+            <strong>Параметры пути:</strong> <span class="param">id</span> - идентификатор задачи
+        </div>
+    </div>
+
+    <h2>📌 Примеры использования с cURL</h2>
+    
+    <div style="background: #2d2d2d; color: #f8f8f2; padding: 15px; border-radius: 8px; font-family: monospace; margin: 20px 0;">
+        <div style="color: #ae81ff;"># 1. Регистрация</div>
+        <div>curl -X POST http://localhost:8080/register \</div>
+        <div>  -H "Content-Type: application/json" \</div>
+        <div>  -d '{"name":"Иван","email":"ivan@mail.com","login":"ivan123","password":"123456"}'</div>
+        <br>
+        <div style="color: #ae81ff;"># 2. Вход и сохранение токена</div>
+        <div>curl -X POST http://localhost:8080/login \</div>
+        <div>  -H "Content-Type: application/json" \</div>
+        <div>  -d '{"email":"ivan@mail.com","password":"123456"}'</div>
+        <br>
+        <div style="color: #ae81ff;"># 3. Подключение к доске (с паролем!)</div>
+        <div>curl -X POST http://localhost:8080/api/users \</div>
+        <div>  -H "Authorization: Bearer ВАШ_ТОКЕН" \</div>
+        <div>  -H "Content-Type: application/json" \</div>
+        <div>  -d '{"desk_id": 1, "password": "пароль_доски"}'</div>
+    </div>
+
+<footer style="margin-top: 50px; text-align: center; color: #999; font-size: 0.9em;">
+    
+    <p>Репозиторий: <a href="https://github.com/N1ktarchik/BOARD_OF_ISSUSES" target="_blank" style="color: #3498db; text-decoration: none;">github.com/N1ktarchik/BOARD_OF_ISSUSES</a></p>
+     
+    <div style="margin-bottom: 15px; display: flex; justify-content: center; align-items: center; gap: 20px; flex-wrap: wrap;">
+        <span style="display: inline-flex; align-items: center; gap: 5px;">
+            powered by <strong style="color: #666;">N1ktarchik</strong>
+        </span>
+        
+        <a href="https://t.me/n1ktarchik" 
+           target="_blank"
+           style="display: inline-flex; align-items: center; gap: 8px; background: #0088cc; color: white; text-decoration: none; padding: 8px 20px; border-radius: 30px; font-size: 0.95em; transition: all 0.3s ease; box-shadow: 0 2px 8px rgba(0,136,204,0.2);"
+           onmouseover="this.style.background='#0077b5'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,136,204,0.3)';"
+           onmouseout="this.style.background='#0088cc'; this.style.transform='translateY(0)'; this.style.boxShadow='0 2px 8px rgba(0,136,204,0.2)';">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.78-.42 1.04-.69 1.07-.59.05-1.04-.39-1.61-.76-1.1-.74-1.72-1.2-2.79-1.93-1.23-.85-.43-1.32.27-2.08.18-.2 3.37-3.09 3.43-3.35.01-.04.01-.1-.05-.15-.06-.05-.15-.03-.22-.02-.09.02-1.49.95-4.21 2.79-.4.27-.76.4-1.08.39-.36-.01-1.04-.2-1.55-.37-.63-.21-1.13-.32-1.09-.69.02-.19.29-.39.8-.59 3.14-1.37 5.24-2.27 6.3-2.71 3-1.22 3.62-1.43 4.03-1.44.09 0 .28.02.41.13.1.09.14.21.15.3.01.09.02.24.01.37z" fill="white"/>
+            </svg>
+            <span>Написать в Telegram</span>
+        </a>
+    </div>
+
+    <p style="margin-top: 10px; font-size: 0.85em;">Board of Issues API</p>
+</footer>
+
+    </div>
+
+</footer>
+</body>
+</html>`

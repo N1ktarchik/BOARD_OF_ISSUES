@@ -15,7 +15,7 @@ func (c *connect) CreateDesk(ctx context.Context, desk *repo.Desk) error {
 
 	defer tx.Rollback(ctx)
 
-	query := `INSERT INTO desks (name,password,ownerid) VALUES ($1,$2,$3,) RETURNING id`
+	query := `INSERT INTO desks (name,password,ownerid) VALUES ($1,$2,$3) RETURNING id`
 	err = tx.QueryRow(ctx, query, desk.Name, desk.Password, desk.OwnerId).Scan(&desk.Id)
 	if err != nil {
 		return err

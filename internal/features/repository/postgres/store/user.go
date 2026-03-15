@@ -7,14 +7,16 @@ import (
 	repo "Board_of_issuses/internal/features/repository"
 )
 
-func (c *connect) CreateUser(ctx context.Context, user *repo.User) error {
-	query := `INSERT INTO users (login,password,email,name) VALUES ($1,$2,$3,$4) `
+func (c *connect) CreateUser(ctx context.Context, user *repo.User) (int, error) {
+	query := `INSERT INTO users (login, password, email, name) VALUES ($1, $2, $3, $4) RETURNING id`
 
-	if _, err := c.db.Exec(ctx, query, user.Login, user.Password, user.Email, user.Name); err != nil {
-		return err
+	var id int
+
+	if err := c.db.QueryRow(ctx, query, user.Login, user.Password, user.Email, user.Name).Scan(&id); err != nil {
+		return 0, err
 	}
 
-	return nil
+	return id, nil
 }
 
 func (c *connect) UpdateUserEmail(ctx context.Context, email string, userId int) error {

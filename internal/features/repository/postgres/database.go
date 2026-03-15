@@ -84,11 +84,11 @@ func createTables(ctx context.Context, db *pgxpool.Pool) error {
 	}
 
 	indexes := []string{
-		`CREATE INDEX users_idx ON users(id);`,
-		`CREATE INDEX deskusers_idx ON desksusers(userid,deskid);`,
-		`CREATE INDEX desks_idx ON desk(id);`,
-		`CREATE INDEX tasks_idx ON tasks(id);`,
-		`CREATE INDEX tasks_help_idx ON tasks(userid,deskid);`,
+		`CREATE INDEX IF NOT EXISTS users_idx ON users(id);`,
+		`CREATE INDEX IF NOT EXISTS deskusers_idx ON desksusers(userid,deskid);`,
+		`CREATE INDEX IF NOT EXISTS desks_idx ON desks(id);`,
+		`CREATE INDEX IF NOT EXISTS tasks_idx ON tasks(id);`,
+		`CREATE INDEX IF NOT EXISTS tasks_help_idx ON tasks(userid,deskid);`,
 	}
 
 	for _, query := range tables {

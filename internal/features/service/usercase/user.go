@@ -23,9 +23,12 @@ func (s *Service) Registration(ctx context.Context, user *dn.User) (string, erro
 	}
 
 	user.Password = hashPassword
-	if err = s.repo.CreateUser(ctx, user.ToRepoUser()); err != nil {
+	userId, err := s.repo.CreateUser(ctx, user.ToRepoUser())
+	if err != nil {
 		return "", err
 	}
+
+	user.Id = userId
 
 	token, err := s.auth.JWTManager.Create(user.Id, user.Email)
 	if err != nil {

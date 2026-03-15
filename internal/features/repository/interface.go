@@ -6,7 +6,7 @@ import (
 )
 
 type Repository interface {
-	CreateUser(ctx context.Context, user *User) error
+	CreateUser(ctx context.Context, user *User) (int, error)
 	UpdateUserEmail(ctx context.Context, email string, userId int) error
 	UpdateUserName(ctx context.Context, name string, userId int) error
 	UpdateUserPassword(ctx context.Context, password string, userId int) error

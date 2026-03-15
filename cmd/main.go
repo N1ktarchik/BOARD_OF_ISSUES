@@ -9,16 +9,26 @@ import (
 	tarnsport "Board_of_issuses/internal/features/transport"
 	"Board_of_issuses/internal/features/transport/http/handlers"
 	"context"
+	"fmt"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
+
+	err := godotenv.Load()
+	if err != nil {
+		error := fmt.Sprintf("Ошибка загрузки .env файла: %s", err)
+		panic(error)
+	}
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
 	db, err := postgres.CreateDB(ctx)
 	if err != nil {
-		//если не надо дб(мок запуск) оставить пустым , если дб подключаем то :
-		//panic(err)
+		//если не надо дб(мок запуск) оставить пустым , если дб подключаем то: panic(err)
+		panic(err)
 	}
 
 	jwtConfig := jwt.LoadJwtConfig()

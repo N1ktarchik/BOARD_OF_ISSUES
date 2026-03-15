@@ -52,14 +52,74 @@
 
 API построен на принципах REST. Подробная спецификация с примерами доступна по корневому маршруту `/`.
 
+Да, в README.md нужно поправить описание эндпоинта подключения к доске и примеры. Вот что конкретно:
+
+## 🔍 Что исправить в README.md:
+
+### 1. В разделе "Пользователи" (Authentication & Profile)
+Сейчас там написано:
+```markdown
+* `POST /api/users` — добавление пользователя на доску (по `desk_id`).
+```
+
+Нужно добавить про пароль:
+```markdown
+* `POST /api/users` — подключение пользователя к доске. Требуется `desk_id` и **пароль доски**.
+```
+
+### 2. В разделе "Примеры использования (cURL)"
+Нужно добавить пример подключения к доске:
+
+```markdown
+**8. Подключение к доске**
+
+    curl -X POST http://localhost:8080/api/users \
+      -H "Authorization: Bearer <вставь_свой_токен>" \
+      -H "Content-Type: application/json" \
+      -d '{"desk_id": 1, "password": "пароль_доски"}'
+```
+
+### 3. Если хотите полностью обновить раздел с пользователями
+Вот готовый блок для замены:
+
+Скопируйте этот блок и замените им соответствующий раздел в `README.md`:
+
+```markdown
 ### 👤 Пользователи (Authentication & Profile)
-* **Регистрация:** `POST /register` — создание нового аккаунта.
-* **Вход:** `POST /login` — получение JWT-токена для дальнейшей работы.
-* **Управление профилем (требуют `Bearer Token`):**
-  * `PATCH /api/users/name` — смена имени.
-  * `PATCH /api/users/email` — смена email.
-  * `PATCH /api/users/password` — смена пароля (с подтверждением старого).
-  * `POST /api/users` — добавление пользователя на доску (по `desk_id`).
+
+  * **Регистрация:** `POST /register` — создание нового аккаунта.
+    ```json
+    {"name": "Имя", "email": "user@mail.com", "login": "login123", "password": "1234567"}
+    ```
+
+  * **Вход:** `POST /login` — получение JWT-токена.
+    ```json
+    {"email": "user@mail.com", "password": "1234567"} 
+    // или
+    {"login": "login123", "password": "1234567"}
+    ```
+
+  * **Управление профилем (требуют `Bearer Token`):**
+    * `PATCH /api/users/name` — смена имени.
+      ```json
+      {"name": "Новое имя"}
+      ```
+    * `PATCH /api/users/email` — смена email.
+      ```json
+      {"email": "new@mail.com"}
+      ```
+    * `PATCH /api/users/password` — смена пароля.
+      ```json
+      {"password": "новый_пароль"}
+      ```
+    * `POST /api/users` — подключение к доске. **Требуется пароль доски!**
+      ```json
+      {
+        "desk_id": 123,
+        "password": "пароль_доски"
+      }
+      ```
+```
 
 ### 📊 Доски (Desks)
 * **Создание:** `POST /api/desks` — новая доска с паролем.
@@ -106,14 +166,14 @@ API построен на принципах REST. Подробная специ
 ```bash
 curl -X POST http://localhost:8080/register \
   -H "Content-Type: application/json" \
-  -d '{"name":"Иван","email":"ivan@mail.com","password":"123456"}'
+  -d '{"name": "Имя", "email": "user@mail.com", "login": "login123", "password": "1234567"}'
 ```
 
 **2. Вход в систему (получаем токен)**
 ```bash
 curl -X POST http://localhost:8080/login \
   -H "Content-Type: application/json" \
-  -d '{"email":"ivan@mail.com","password":"123456"}'
+  -d '{"email": "user@mail.com", "password": "1234567"} or {"login": "login123", "password": "1234567"}'
 ```
 *В ответе придет JWT-токен. Сохрани его — он понадобится для всех следующих запросов.*
 
@@ -149,6 +209,14 @@ curl -X PATCH http://localhost:8080/api/tasks/1/complyte \
 ```bash
 curl -X DELETE http://localhost:8080/api/tasks/1 \
   -H "Authorization: Bearer <вставь_свой_токен>"
+```
+
+**8. Подключение к доске**
+```bash
+    curl -X POST http://localhost:8080/api/users \
+      -H "Authorization: Bearer <вставь_свой_токен>" \
+      -H "Content-Type: application/json" \
+      -d '{"desk_id": 1, "password": "пароль_доски"}'
 ```
 
 ## 🧪 Тестирование
