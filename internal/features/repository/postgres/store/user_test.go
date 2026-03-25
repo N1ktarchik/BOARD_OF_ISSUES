@@ -3,23 +3,35 @@ package store
 import (
 	"Board_of_issuses/internal/features/repository"
 	"context"
+	"errors"
+	"fmt"
+	"os"
 	"testing"
 	"time"
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-const (
-	//введите для подключения к ДБ
-	CONSTR string = "your url"
-)
-
 func createTestPool(ctx context.Context) (*pgxpool.Pool, error) {
 
-	config, err := pgxpool.ParseConfig(CONSTR)
+	err := godotenv.Load(".env")
+	if err != nil {
+		err = godotenv.Load("/app/.env")
+		if err != nil {
+			return nil, err
+		}
+	}
+
+	connStr := os.Getenv("CONSTR")
+	if connStr == "" {
+		return nil, errors.New("CONSTR not set, skipping integration test")
+	}
+
+	config, err := pgxpool.ParseConfig(connStr)
 	if err != nil {
 		return nil, err
 	}
@@ -38,8 +50,90 @@ func createTestPool(ctx context.Context) (*pgxpool.Pool, error) {
 		return nil, err
 	}
 
+	var tableExists bool
+	err = pool.QueryRow(ctx, `
+        SELECT EXISTS (
+            SELECT 1 
+            FROM information_schema.tables 
+            WHERE table_name = 'users'
+        )
+    `).Scan(&tableExists)
+
+	if err != nil {
+		return nil, fmt.Errorf("failed to check if table exists: %w", err)
+	}
+
+	if !tableExists {
+		createTables(ctx, pool)
+	}
+
 	return pool, nil
 }
+
+func createTables(ctx context.Context, db *pgxpool.Pool) error {
+	tables := []string{
+
+		`CREATE TABLE IF NOT EXISTS users(
+			id SERIAL PRIMARY KEY,
+			login VARCHAR(200) NOT NULL,
+			password VARCHAR(200) NOT NULL,
+			email VARCHAR(200) DEFAULT '',
+			name VARCHAR(100) NOT NULL DEFAULT 'user',
+			created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+
+		
+		)`,
+
+		`CREATE TABLE IF NOT EXISTS desksusers(
+			userid SERIAL NOT NULL,
+			deskid SERIAL NOT NULL
+		
+		)`,
+
+		`CREATE TABLE IF NOT EXISTS desks(
+				id SERIAL PRIMARY KEY,
+				name VARCHAR(100) NOT NULL DEFAULT 'userdesk',
+				password VARCHAR(100) NOT NULL,
+				ownerid SERIAL NOT NULL,
+				created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+		
+		)`,
+
+		`CREATE TABLE IF NOT EXISTS tasks(
+				id SERIAL PRIMARY KEY,
+				userid SERIAL NOT NULL,
+				deskid SERIAL NOT NULL,
+				name VARCHAR(100) NOT NULL,
+				description VARCHAR(255) DEFAULT '',
+				done BOOLEAN NOT NULL DEFAULT FALSE,
+				time TIMESTAMP NOT NULL,
+				created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+		)`,
+	}
+
+	indexes := []string{
+		`CREATE INDEX IF NOT EXISTS users_idx ON users(id);`,
+		`CREATE INDEX IF NOT EXISTS deskusers_idx ON desksusers(userid,deskid);`,
+		`CREATE INDEX IF NOT EXISTS desks_idx ON desks(id);`,
+		`CREATE INDEX IF NOT EXISTS tasks_idx ON tasks(id);`,
+		`CREATE INDEX IF NOT EXISTS tasks_help_idx ON tasks(userid,deskid);`,
+	}
+
+	for _, query := range tables {
+		if _, err := db.Exec(ctx, query); err != nil {
+			return err
+		}
+	}
+
+	for _, query := range indexes {
+		if _, err := db.Exec(ctx, query); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
 func TestCreateGetCheckDeleteUser(t *testing.T) {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
