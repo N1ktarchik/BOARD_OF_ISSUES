@@ -1,10 +1,10 @@
-package auth
+package domain
 
 import (
 	"crypto/sha256"
 	"encoding/hex"
 
-	er "Board_of_issuses/internal/core"
+	"Board_of_issuses/internal/core/errors"
 )
 
 const (
@@ -15,11 +15,11 @@ const (
 func Hash(password string) (string, error) {
 
 	if len(password) <= MinPasswordLength {
-		return "", er.TooShortPassword()
+		return "", errors.TooShortPassword()
 	}
 
 	if len(password) > MaxPasswordLength {
-		return "", er.TooLongPassword()
+		return "", errors.TooLongPassword()
 	}
 
 	hashPassword := sha256.Sum256([]byte(password))
@@ -27,11 +27,11 @@ func Hash(password string) (string, error) {
 	return hex.EncodeToString(hashPassword[:]), nil
 }
 
-func Compare(password, truePassword string) bool {
+func Compare(password, trueHashPassword string) bool {
 	hashPassword, err := Hash(password)
 	if err != nil {
 		return false
 	}
 
-	return hashPassword == truePassword
+	return hashPassword == trueHashPassword
 }

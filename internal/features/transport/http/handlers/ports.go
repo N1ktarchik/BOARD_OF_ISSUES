@@ -5,7 +5,6 @@ import (
 	"context"
 )
 
-//go:generate mockgen -destination=../../mocks/mock_user.go -package=mocks . Service
 type Service interface {
 	Registration(ctx context.Context, user *dn.User) (string, error)
 	Authorization(ctx context.Context, user *dn.User) (string, error)
