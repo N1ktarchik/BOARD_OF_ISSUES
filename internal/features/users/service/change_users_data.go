@@ -2,7 +2,7 @@ package service
 
 import (
 	"Board_of_issuses/internal/core/domain"
-	"Board_of_issuses/internal/core/errors"
+	core_errors "Board_of_issuses/internal/core/errors"
 	"context"
 	"log/slog"
 	"strings"
@@ -17,14 +17,14 @@ func (s *UsersService) ChangeUsersData(ctx context.Context, user *domain.User) (
 
 	if user.Name != "" && len(user.Name) < 3 {
 		s.log.Error("change users data failed : invalid user name", slog.String("user_id", user.ID.String()))
-		return nil, errors.BadRequest()
+		return nil, core_errors.BadRequest()
 	}
 
 	if user.Email != "" {
 
 		if len(user.Email) < 7 || !strings.Contains(user.Email, "@") {
 			s.log.Error("change users data failed : invalid user email", slog.String("user_id", user.ID.String()))
-			return nil, errors.BadRequest()
+			return nil, core_errors.BadRequest()
 		}
 	}
 

@@ -25,7 +25,7 @@ func (e *ErrorApp) StatusCode() int {
 		return http.StatusBadRequest
 	case "USER_ALREADY_REGISTERED", "EMAIL_ALREADY_REGISTERED":
 		return http.StatusConflict
-	case "USER_NOT_FOUND":
+	case "USER_NOT_FOUND", "DESK_NOT_FOUND":
 		return http.StatusNotFound
 	default:
 		return http.StatusInternalServerError
@@ -135,5 +135,12 @@ func UserNotFound() *ErrorApp {
 	return &ErrorApp{
 		Code:    "USER_NOT_FOUND",
 		Message: "user not found",
+	}
+}
+
+func DeskNotFound() *ErrorApp {
+	return &ErrorApp{
+		Code:    "DESK_NOT_FOUND",
+		Message: "desk not found",
 	}
 }

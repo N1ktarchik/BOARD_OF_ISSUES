@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"Board_of_issuses/internal/core/domain"
-	"Board_of_issuses/internal/core/errors"
+	core_errors "Board_of_issuses/internal/core/errors"
 	"Board_of_issuses/internal/features/users/service/mocks"
 
 	"github.com/google/uuid"
@@ -49,7 +49,7 @@ func TestRegisterUser_AlreadyExists(t *testing.T) {
 	svc, repo, _, ctx := initTest(t)
 	user := &domain.User{Login: "busy_man", Password: "password123", Email: "a@a.ru", Name: "A"}
 
-	repo.EXPECT().CreateUser(ctx, gomock.Any()).Return(errors.UserAlreadyRegistered("busy_man", ""))
+	repo.EXPECT().CreateUser(ctx, gomock.Any()).Return(core_errors.UserAlreadyRegistered("busy_man", ""))
 
 	_, err := svc.RegisterUser(ctx, user)
 	if err == nil {
@@ -86,7 +86,7 @@ func TestLoginUser_Success(t *testing.T) {
 func TestLoginUser_NotFound(t *testing.T) {
 	svc, repo, _, ctx := initTest(t)
 
-	repo.EXPECT().GetUser(ctx, "ghost", "").Return(nil, errors.ServerError()) // Или твоя ошибка Not Found
+	repo.EXPECT().GetUser(ctx, "ghost", "").Return(nil, core_errors.ServerError()) 
 
 	_, err := svc.LoginUser(ctx, &domain.User{Login: "ghost", Password: "123"})
 	if err == nil {
@@ -116,7 +116,6 @@ func TestChangeData_ShortName(t *testing.T) {
 	}
 }
 
-// Ошибка: кривой email
 func TestChangeData_InvalidEmail(t *testing.T) {
 	svc, _, _, ctx := initTest(t)
 	user := &domain.User{ID: uuid.New(), Email: "not_an_email"}

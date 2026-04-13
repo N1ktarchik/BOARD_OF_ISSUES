@@ -2,7 +2,7 @@ package http
 
 import (
 	"Board_of_issuses/internal/core/domain"
-	"Board_of_issuses/internal/core/errors"
+	core_errors "Board_of_issuses/internal/core/errors"
 	req "Board_of_issuses/internal/core/transport/request"
 	resp "Board_of_issuses/internal/core/transport/response"
 	"log/slog"
@@ -12,13 +12,13 @@ import (
 )
 
 func (h *UsersHandler) ChangesUserData(w http.ResponseWriter, r *http.Request) {
-	h.log.Info("new request", slog.String("path", "/users/data"))
+	h.log.Info("new request", slog.String("path", "/users/update"))
 	ctx := r.Context()
 	userIdStr, ok := domain.GetUserID(ctx)
 
 	if !ok {
 		h.log.Error("connect user to desk failed: userID not faund in context")
-		resp.RespondWithError(w, errors.BadRequest())
+		resp.RespondWithError(w, core_errors.BadRequest())
 		return
 	}
 
@@ -32,7 +32,7 @@ func (h *UsersHandler) ChangesUserData(w http.ResponseWriter, r *http.Request) {
 	userUUID, err := uuid.Parse(userIdStr)
 	if err != nil {
 		h.log.Error("parse userID failed", slog.Any("err", err))
-		resp.RespondWithError(w, errors.BadRequest())
+		resp.RespondWithError(w, core_errors.BadRequest())
 		return
 	}
 

@@ -45,42 +45,55 @@ func CreateDB(ctx context.Context) (*pgxpool.Pool, error) {
 func createTables(ctx context.Context, db *pgxpool.Pool) error {
 	tables := []string{
 
-		`CREATE TABLE IF NOT EXISTS users(
-			id SERIAL PRIMARY KEY,
-			login VARCHAR(200) NOT NULL,
-			password VARCHAR(200) NOT NULL,
-			email VARCHAR(200) DEFAULT '',
+		`CREATE TABLE IF NOT EXISTS users (
+			id UUID PRIMARY KEY,
+			login VARCHAR(100) NOT NULL UNIQUE,
+			password TEXT NOT NULL, -- Используем TEXT для хэша
+			email VARCHAR(255) UNIQUE, -- UNIQUE для почты
 			name VARCHAR(100) NOT NULL DEFAULT 'user',
-			created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+			created_at TIMESTAMPTZ DEFAULT (now() AT TIME ZONE 'utc')
+		);`,
 
-		
-		)`,
+		`CREATE TABLE IF NOT EXISTS desks (
+			id UUID PRIMARY KEY,
+			name VARCHAR(100) NOT NULL DEFAULT 'new desk',
+			password TEXT NOT NULL, -- Код доступа к доске
+			owner_id UUID NOT NULL,
+			created_at TIMESTAMPTZ DEFAULT (now() AT TIME ZONE 'utc'),
 
-		`CREATE TABLE IF NOT EXISTS desksusers(
-			userid SERIAL NOT NULL,
-			deskid SERIAL NOT NULL
-		
-		)`,
+			CONSTRAINT fk_owner FOREIGN KEY (owner_id) 
+				REFERENCES users(id) ON DELETE CASCADE
+		);`,
 
-		`CREATE TABLE IF NOT EXISTS desks(
-				id SERIAL PRIMARY KEY,
-				name VARCHAR(100) NOT NULL DEFAULT 'userdesk',
-				password VARCHAR(100) NOT NULL,
-				ownerid SERIAL NOT NULL,
-				created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
-		
-		)`,
+		`CREATE TABLE IF NOT EXISTS desk_members (
+			user_id UUID NOT NULL,
+			desk_id UUID NOT NULL,
+			
+			PRIMARY KEY (user_id, desk_id),
 
-		`CREATE TABLE IF NOT EXISTS tasks(
-				id SERIAL PRIMARY KEY,
-				userid SERIAL NOT NULL,
-				deskid SERIAL NOT NULL,
-				name VARCHAR(100) NOT NULL,
-				description VARCHAR(255) DEFAULT '',
-				done BOOLEAN NOT NULL DEFAULT FALSE,
-				time TIMESTAMP NOT NULL,
-				created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
-		)`,
+			CONSTRAINT fk_member_user FOREIGN KEY (user_id) 
+				REFERENCES users(id) ON DELETE CASCADE,
+			
+			CONSTRAINT fk_member_desk FOREIGN KEY (desk_id) 
+				REFERENCES desks(id) ON DELETE CASCADE
+		);`,
+
+		`CREATE TABLE IF NOT EXISTS tasks (
+			id UUID PRIMARY KEY,
+			author_id UUID NOT NULL,
+			desk_id UUID NOT NULL,
+			name VARCHAR(255) NOT NULL,
+			description TEXT DEFAULT '',
+			done BOOLEAN NOT NULL DEFAULT FALSE,
+			deadline TIMESTAMPTZ,
+			created_at TIMESTAMPTZ DEFAULT (now() AT TIME ZONE 'utc'),
+
+			CONSTRAINT fk_task_desk FOREIGN KEY (desk_id) 
+				REFERENCES desks(id) ON DELETE CASCADE,
+
+			CONSTRAINT fk_task_author FOREIGN KEY (author_id) 
+				REFERENCES users(id) ON DELETE CASCADE
+		);`,
 	}
 
 	indexes := []string{

@@ -2,7 +2,7 @@ package service
 
 import (
 	"Board_of_issuses/internal/core/domain"
-	"Board_of_issuses/internal/core/errors"
+	core_errors "Board_of_issuses/internal/core/errors"
 	"context"
 	"log/slog"
 
@@ -13,7 +13,7 @@ func (s *UsersService) RegisterUser(ctx context.Context, user *domain.User) (str
 
 	if user.Login == "" || user.Password == "" || user.Email == "" || user.Name == "" {
 		s.log.Error("register failed: invalid user data")
-		return "", errors.BadRequest()
+		return "", core_errors.BadRequest()
 	}
 
 	hashPassword, err := domain.Hash(user.Password)

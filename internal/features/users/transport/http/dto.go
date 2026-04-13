@@ -2,8 +2,6 @@ package http
 
 import (
 	dn "Board_of_issuses/internal/core/domain"
-
-	"github.com/google/uuid"
 )
 
 type UsersRequestDTO struct {
@@ -20,9 +18,4 @@ func (u *UsersRequestDTO) ToServiceUser() *dn.User {
 		Email:    u.Email,
 		Name:     u.Name,
 	}
-}
-
-type ConnectUserToDeskRequestDTO struct {
-	ID       uuid.UUID `json:"desk_id" example:"636e856-e12b-56d9-f987-333222561234"`
-	Password string    `json:"password" example:"deskpass2000"`
 }

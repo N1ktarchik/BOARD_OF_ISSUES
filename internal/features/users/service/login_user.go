@@ -2,7 +2,7 @@ package service
 
 import (
 	"Board_of_issuses/internal/core/domain"
-	"Board_of_issuses/internal/core/errors"
+	core_errors "Board_of_issuses/internal/core/errors"
 	"context"
 	"log/slog"
 )
@@ -12,7 +12,7 @@ func (s *UsersService) LoginUser(ctx context.Context, user *domain.User) (string
 	if user.Password == "" || (user.Email == "" && user.Login == "") {
 		s.log.Error("login failed: empty credentials")
 
-		return "", errors.BadRequest()
+		return "", core_errors.BadRequest()
 	}
 
 	repoUser, err := s.usersRepository.GetUser(ctx, user.Login, user.Email)
@@ -23,7 +23,7 @@ func (s *UsersService) LoginUser(ctx context.Context, user *domain.User) (string
 
 	if !domain.Compare(user.Password, repoUser.Password) {
 		s.log.Error("login failed: wrong password")
-		return "", errors.InvalidPassword()
+		return "", core_errors.InvalidPassword()
 	}
 
 	JWTtoken, err := s.authService.CreateJWT(repoUser.ID.String())
