@@ -4,6 +4,7 @@ import (
 	"Board_of_issuses/internal/core/domain"
 	core_errors "Board_of_issuses/internal/core/errors"
 	resp "Board_of_issuses/internal/core/transport/response"
+	"fmt"
 	"log/slog"
 	"net/http"
 
@@ -11,6 +12,9 @@ import (
 )
 
 func (h *DesksHandler) DeleteDesk(w http.ResponseWriter, r *http.Request) {
+	h.log.Info("new request", slog.String("path", "/desks/{id}"),
+		slog.String("method", http.MethodDelete))
+
 	ctx := r.Context()
 	userIdStr, ok := domain.GetUserID(ctx)
 	if !ok {
@@ -38,6 +42,6 @@ func (h *DesksHandler) DeleteDesk(w http.ResponseWriter, r *http.Request) {
 
 	h.log.Info("desk deleted successfully", slog.Any("deskID", deskIdStr), slog.Any("userID", userIdStr))
 
-	resp.RespondWithJSON(w, http.StatusOK, "desk with ID " + deskIdStr + " has been deleted")
+	resp.RespondWithJSON(w, http.StatusOK, map[string]string{"message": fmt.Sprintf("desk with ID %s has been deleted", deskIdStr)})
 
 }
