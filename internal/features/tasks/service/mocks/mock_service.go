@@ -10,7 +10,7 @@
 package mocks
 
 import (
-	domain "Board_of_issuses/internal/core/domain"
+	domain "N1ktarchik/Board_of_issues/internal/core/domain"
 	context "context"
 	reflect "reflect"
 

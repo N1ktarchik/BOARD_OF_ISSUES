@@ -1,13 +1,25 @@
 package http
 
 import (
-	"Board_of_issuses/internal/core/domain"
-	core_errors "Board_of_issuses/internal/core/errors"
-	resp "Board_of_issuses/internal/core/transport/response"
+	"N1ktarchik/Board_of_issues/internal/core/domain"
+	core_errors "N1ktarchik/Board_of_issues/internal/core/errors"
+	resp "N1ktarchik/Board_of_issues/internal/core/transport/response"
 	"log/slog"
 	"net/http"
 )
 
+// GetUsersDesks            godoc
+// @Summary                 Get my desks
+// @Description             Get all desks where current user is a member or owner
+// @Tags                    desks
+// @Security                ApiKeyAuth
+// @Accept                  json
+// @Produce                 json
+// @Success                 200 {array} domain.Desk "Successfully retrieved list of desks"
+// @Failure                 400 {object} resp.ErrorResponse "Possible: invalid_user_id, bad_request"
+// @Failure                 401 {object} resp.ErrorResponse "unauthorized"
+// @Failure                 500 {object} resp.ErrorResponse "internal_server_error"
+// @Router                  /desks/my [get]
 func (h *DesksHandler) GetUsersDesks(w http.ResponseWriter, r *http.Request) {
 	h.log.Info("new request", slog.String("path", "/desks/my"))
 

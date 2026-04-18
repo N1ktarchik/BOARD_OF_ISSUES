@@ -8,8 +8,8 @@ import (
 	"testing"
 	"time"
 
-	"Board_of_issuses/internal/core/domain"
-	"Board_of_issuses/internal/features/tasks/service/mocks"
+	"N1ktarchik/Board_of_issues/internal/core/domain"
+	"N1ktarchik/Board_of_issues/internal/features/tasks/service/mocks"
 
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/require"

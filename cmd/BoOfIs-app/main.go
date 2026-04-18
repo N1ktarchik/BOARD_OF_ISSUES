@@ -1,23 +1,23 @@
 package main
 
 import (
-	auth_service "Board_of_issuses/internal/features/auth"
+	auth_service "N1ktarchik/Board_of_issues/internal/features/auth"
 
-	users_repository "Board_of_issuses/internal/features/users/repository"
-	users_service "Board_of_issuses/internal/features/users/service"
-	users_transport_http "Board_of_issuses/internal/features/users/transport/http"
+	users_repository "N1ktarchik/Board_of_issues/internal/features/users/repository"
+	users_service "N1ktarchik/Board_of_issues/internal/features/users/service"
+	users_transport_http "N1ktarchik/Board_of_issues/internal/features/users/transport/http"
 
-	desks_repository "Board_of_issuses/internal/features/desks/repository"
-	desks_service "Board_of_issuses/internal/features/desks/service"
-	desks_transport_http "Board_of_issuses/internal/features/desks/transport/http"
+	desks_repository "N1ktarchik/Board_of_issues/internal/features/desks/repository"
+	desks_service "N1ktarchik/Board_of_issues/internal/features/desks/service"
+	desks_transport_http "N1ktarchik/Board_of_issues/internal/features/desks/transport/http"
 
-	tasks_repository "Board_of_issuses/internal/features/tasks/repository"
-	tasks_service "Board_of_issuses/internal/features/tasks/service"
-	tasks_transport_http "Board_of_issuses/internal/features/tasks/transport/http"
+	tasks_repository "N1ktarchik/Board_of_issues/internal/features/tasks/repository"
+	tasks_service "N1ktarchik/Board_of_issues/internal/features/tasks/service"
+	tasks_transport_http "N1ktarchik/Board_of_issues/internal/features/tasks/transport/http"
 
-	"Board_of_issuses/internal/core/logger"
-	"Board_of_issuses/internal/core/repository/postgres"
-	"Board_of_issuses/internal/core/transport/server"
+	"N1ktarchik/Board_of_issues/internal/core/logger"
+	"N1ktarchik/Board_of_issues/internal/core/repository/postgres"
+	"N1ktarchik/Board_of_issues/internal/core/transport/server"
 	"context"
 	"log/slog"
 	"os"
@@ -27,17 +27,20 @@ import (
 	"github.com/joho/godotenv"
 )
 
-// @title 			Board Of Issuses
-// @version 		2.0
-// @description 	Golang Board Of Issuses API
+// @title           Board Of Issues API
+// @version         2.0
+// @description     REST API for the Board of Issues task management system.
+// @contact.name    Nikita Kleymenov
+// @contact.url     https://t.me/n1ktarchik
+// @contact.email   klejmenov663@email.com
 
 // @securityDefinitions.apikey  ApiKeyAuth
 // @in                          header
 // @name                        Authorization
 // @description                 Enter the token in the format: Bearer <JWT_TOKEN>
 
-// @host 			localhost:8080
-// @BasePath 		/
+// @host            localhost:8080
+// @BasePath        /
 func main() {
 	log := logger.Setup()
 	slog.SetDefault(log)
@@ -109,7 +112,7 @@ func main() {
 	api.HandleFunc("/desks/{id}", desksTransportHttp.DeleteDesk).Methods("DELETE")
 	api.HandleFunc("/desks/my", desksTransportHttp.GetUsersDesks).Methods("GET")
 	api.HandleFunc("/desks/connect", desksTransportHttp.ConnectUserToDesk).Methods("POST")
-	api.HandleFunc("/desks/update", tasksTransportHttp.ChangeTaskData).Methods("PATCH")
+	api.HandleFunc("/desks/update", desksTransportHttp.ChangeDeskData).Methods("PATCH")
 
 	api.HandleFunc("/tasks/create", tasksTransportHttp.CreateTask).Methods("POST")
 	api.HandleFunc("/tasks/{id}/complete", tasksTransportHttp.CompleteTask).Methods("PATCH")

@@ -1,7 +1,7 @@
 package http
 
 import (
-	dn "Board_of_issuses/internal/core/domain"
+	dn "N1ktarchik/Board_of_issues/internal/core/domain"
 )
 
 type UsersRequestDTO struct {

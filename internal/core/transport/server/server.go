@@ -7,7 +7,7 @@ import (
 	"github.com/gorilla/mux"
 	httpSwagger "github.com/swaggo/http-swagger/v2"
 
-	"Board_of_issuses/docs"
+	"N1ktarchik/Board_of_issues/docs"
 	
 )
 

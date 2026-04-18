@@ -1,8 +1,8 @@
 package service
 
 import (
-	"Board_of_issuses/internal/core/domain"
-	core_errors "Board_of_issuses/internal/core/errors"
+	"N1ktarchik/Board_of_issues/internal/core/domain"
+	core_errors "N1ktarchik/Board_of_issues/internal/core/errors"
 	"log/slog"
 
 	"context"

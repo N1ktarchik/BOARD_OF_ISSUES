@@ -1,16 +1,31 @@
 package http
 
 import (
-	"Board_of_issuses/internal/core/domain"
-	core_errors "Board_of_issuses/internal/core/errors"
-	req "Board_of_issuses/internal/core/transport/request"
-	resp "Board_of_issuses/internal/core/transport/response"
+	"N1ktarchik/Board_of_issues/internal/core/domain"
+	core_errors "N1ktarchik/Board_of_issues/internal/core/errors"
+	req "N1ktarchik/Board_of_issues/internal/core/transport/request"
+	resp "N1ktarchik/Board_of_issues/internal/core/transport/response"
 	"log/slog"
 	"net/http"
 
 	"github.com/google/uuid"
 )
 
+// ChangesUserData          godoc
+// @Summary                 Update user profile
+// @Description             Update current user's name or email or password
+// @Tags                    users
+// @Security                ApiKeyAuth
+// @Accept                  json
+// @Produce                 json
+// @Param                   request body UsersRequestDTO true "New User Data"
+// @Success                 200 {object} domain.User "Successfully updated user information"
+// @Failure                 400 {object} resp.ErrorResponse "Possible: invalid_email, bad_request"
+// @Failure                 401 {object} resp.ErrorResponse "unauthorized"
+// @Failure                 404 {object} resp.ErrorResponse "user_not_found"
+// @Failure                 409 {object} resp.ErrorResponse "email_already_exists"
+// @Failure                 500 {object} resp.ErrorResponse "internal_server_error"
+// @Router                  /users/update [patch]
 func (h *UsersHandler) ChangesUserData(w http.ResponseWriter, r *http.Request) {
 	h.log.Info("new request", slog.String("path", "/users/update"))
 	ctx := r.Context()

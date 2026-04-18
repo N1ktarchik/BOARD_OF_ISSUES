@@ -4,7 +4,7 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 
-	"Board_of_issuses/internal/core/errors"
+	"N1ktarchik/Board_of_issues/internal/core/errors"
 )
 
 const (

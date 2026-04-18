@@ -1,9 +1,9 @@
 package http
 
 import (
-	"Board_of_issuses/internal/core/domain"
-	core_errors "Board_of_issuses/internal/core/errors"
-	resp "Board_of_issuses/internal/core/transport/response"
+	"N1ktarchik/Board_of_issues/internal/core/domain"
+	core_errors "N1ktarchik/Board_of_issues/internal/core/errors"
+	resp "N1ktarchik/Board_of_issues/internal/core/transport/response"
 	"fmt"
 	"log/slog"
 	"net/http"
@@ -11,6 +11,21 @@ import (
 	"github.com/gorilla/mux"
 )
 
+// DeleteDesk           godoc
+// @Summary             Delete a desk
+// @Description         Remove a desk by ID (must be owner)
+// @Tags                desks
+// @Security            ApiKeyAuth
+// @Accept              json
+// @Produce             json
+// @Param               id path string true "DESK ID" format(uuid) example("550e8400-e29b-41d4-a716-446655440000")
+// @Success             200 {object} map[string]string "message: desk with ID ... has been deleted"
+// @Failure             400 {object} resp.ErrorResponse "Possible: invalid_uuid, bad_request"
+// @Failure             401 {object} resp.ErrorResponse "unauthorized"
+// @Failure             403 {object} resp.ErrorResponse "not_an_owner"
+// @Failure             404 {object} resp.ErrorResponse "desk_not_found"
+// @Failure             500 {object} resp.ErrorResponse "internal_server_error"
+// @Router              /desks/{id} [delete]
 func (h *DesksHandler) DeleteDesk(w http.ResponseWriter, r *http.Request) {
 	h.log.Info("new request", slog.String("path", "/desks/{id}"),
 		slog.String("method", http.MethodDelete))

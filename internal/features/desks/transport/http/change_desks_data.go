@@ -1,17 +1,32 @@
 package http
 
 import (
-	"Board_of_issuses/internal/core/domain"
-	core_errors "Board_of_issuses/internal/core/errors"
-	"Board_of_issuses/internal/core/transport/request"
-	resp "Board_of_issuses/internal/core/transport/response"
+	"N1ktarchik/Board_of_issues/internal/core/domain"
+	core_errors "N1ktarchik/Board_of_issues/internal/core/errors"
+	"N1ktarchik/Board_of_issues/internal/core/transport/request"
+	resp "N1ktarchik/Board_of_issues/internal/core/transport/response"
 	"log/slog"
 	"net/http"
 
 	"github.com/google/uuid"
 )
 
-func (h *DesksHandler) ChangeDeskDate(w http.ResponseWriter, r *http.Request) {
+// ChangeDeskData           godoc
+// @Summary                 Update desk info
+// @Description             Update desk name or password (must be owner)
+// @Tags                    desks
+// @Security                ApiKeyAuth
+// @Accept                  json
+// @Produce                 json
+// @Param                   request body DeskRequestDTO true "New desk data"
+// @Success                 200 {object} domain.Desk "Successfully updated desk information"
+// @Failure                 400 {object} resp.ErrorResponse "Possible: invalid_uuid, bad_request"
+// @Failure                 401 {object} resp.ErrorResponse "unauthorized"
+// @Failure                 403 {object} resp.ErrorResponse "not_an_owner"
+// @Failure                 404 {object} resp.ErrorResponse "desk_not_found"
+// @Failure                 500 {object} resp.ErrorResponse "internal_server_error"
+// @Router                  /desks/update [patch]
+func (h *DesksHandler) ChangeDeskData(w http.ResponseWriter, r *http.Request) {
 	h.log.Info("new request", slog.String("path", "/desks/update"))
 
 	ctx := r.Context()

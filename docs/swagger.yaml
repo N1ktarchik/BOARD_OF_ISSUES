@@ -1,11 +1,785 @@
 basePath: /
+definitions:
+  N1ktarchik_Board_of_issues_internal_core_domain.Desk:
+    properties:
+      created_at:
+        example: "2023-01-01T00:00:00Z"
+        type: string
+      id:
+        example: 636e856-e12b-56d9-f987-333222561234
+        type: string
+      name:
+        example: My Desk
+        type: string
+      owner_id:
+        example: 832t758-a12g-47y9-i999-123456789098
+        type: string
+      password:
+        example: mysecretpassword
+        type: string
+    type: object
+  N1ktarchik_Board_of_issues_internal_core_domain.Task:
+    properties:
+      author_id:
+        example: 636e856-e12b-56d9-f987-333222561234
+        type: string
+      created_at:
+        example: "2023-10-10T10:00:00Z"
+        type: string
+      deadline:
+        example: "2023-10-10T10:00:00Z"
+        type: string
+      description:
+        example: Task description
+        type: string
+      desk_id:
+        example: 832t758-a12g-47y9-i999-123456789098
+        type: string
+      id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+      name:
+        example: Task name
+        type: string
+      status:
+        example: false
+        type: boolean
+    type: object
+  N1ktarchik_Board_of_issues_internal_core_domain.User:
+    properties:
+      created_at:
+        example: "2026-01-01T00:00:00Z"
+        type: string
+      email:
+        example: bonya123@example.com
+        type: string
+      id:
+        example: 636e856-e12b-56d9-f987-333222561234
+        type: string
+      login:
+        example: bonya123
+        type: string
+      name:
+        example: Bonya
+        type: string
+      password:
+        example: pass2000
+        type: string
+    type: object
+  N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse:
+    properties:
+      code:
+        example: 0
+        type: integer
+      error:
+        example: any string-code of error
+        type: string
+      message:
+        example: any error message
+        type: string
+    type: object
+  N1ktarchik_Board_of_issues_internal_core_transport_response.JWTResponse:
+    properties:
+      token:
+        example: any JWT-Token
+        type: string
+    type: object
+  internal_features_desks_transport_http.DeskRequestDTO:
+    properties:
+      created_at:
+        example: "2023-01-01T00:00:00Z"
+        type: string
+      id:
+        example: 636e856-e12b-56d9-f987-333222561234
+        type: string
+      name:
+        example: My Desk
+        type: string
+      owner_id:
+        example: 832t758-a12g-47y9-i999-123456789098
+        type: string
+      password:
+        example: mysecretpassword
+        type: string
+    type: object
+  internal_features_tasks_transport_http.TaskRequestDTO:
+    properties:
+      author_id:
+        example: 636e856-e12b-56d9-f987-333222561234
+        type: string
+      created_at:
+        example: "2023-10-10T10:00:00Z"
+        type: string
+      deadline:
+        example: "2023-10-10T10:00:00Z"
+        type: string
+      description:
+        example: Task description
+        type: string
+      desk_id:
+        example: 832t758-a12g-47y9-i999-123456789098
+        type: string
+      id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+      name:
+        example: Task name
+        type: string
+      status:
+        example: false
+        type: boolean
+    type: object
+  internal_features_tasks_transport_http.UpdateTaskRequestDTO:
+    properties:
+      author_id:
+        example: 636e856-e12b-56d9-f987-333222561234
+        type: string
+      deadline:
+        example: "2023-10-10T10:00:00Z"
+        type: string
+      description:
+        example: Task description
+        type: string
+      id:
+        example: 123e4567-e89b-12d3-a456-426614174000
+        type: string
+      name:
+        example: Task name
+        type: string
+    type: object
+  internal_features_users_transport_http.UsersRequestDTO:
+    properties:
+      email:
+        example: bonya123@example.com
+        type: string
+      login:
+        example: bonya123
+        type: string
+      name:
+        example: Bonya
+        type: string
+      password:
+        example: pass2000
+        type: string
+    type: object
 host: localhost:8080
 info:
-  contact: {}
-  description: Golang Board Of Issuses API
-  title: Board Of Issuses
+  contact:
+    email: klejmenov663@email.com
+    name: Nikita Kleymenov
+    url: https://t.me/n1ktarchik
+  description: REST API for the Board of Issues task management system.
+  title: Board Of Issues API
   version: "2.0"
-paths: {}
+paths:
+  /desks/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove a desk by ID (must be owner)
+      parameters:
+      - description: DESK ID
+        example: '"550e8400-e29b-41d4-a716-446655440000"'
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'message: desk with ID ... has been deleted'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'Possible: invalid_uuid, bad_request'
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "403":
+          description: not_an_owner
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "404":
+          description: desk_not_found
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "500":
+          description: internal_server_error
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete a desk
+      tags:
+      - desks
+  /desks/connect:
+    post:
+      consumes:
+      - application/json
+      description: Connect current user to a desk using desk password
+      parameters:
+      - description: Desk ID and Password
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_features_desks_transport_http.DeskRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: 'message: you have connected to desk'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'Possible: invalid_data, bad_request'
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "404":
+          description: desk_not_found
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "409":
+          description: already_a_member
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "500":
+          description: internal_server_error
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Join a desk
+      tags:
+      - desks
+  /desks/create:
+    post:
+      consumes:
+      - application/json
+      description: Create a new board for tasks
+      parameters:
+      - description: Desk Info
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_features_desks_transport_http.DeskRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully created desk
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_domain.Desk'
+        "400":
+          description: 'Possible: desk_name_too_short, invalid_data'
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "500":
+          description: internal_server_error
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create a desk
+      tags:
+      - desks
+  /desks/my:
+    get:
+      consumes:
+      - application/json
+      description: Get all desks where current user is a member or owner
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved list of desks
+          schema:
+            items:
+              $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_domain.Desk'
+            type: array
+        "400":
+          description: 'Possible: invalid_user_id, bad_request'
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "500":
+          description: internal_server_error
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get my desks
+      tags:
+      - desks
+  /desks/update:
+    patch:
+      consumes:
+      - application/json
+      description: Update desk name or password (must be owner)
+      parameters:
+      - description: New desk data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_features_desks_transport_http.DeskRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated desk information
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_domain.Desk'
+        "400":
+          description: 'Possible: invalid_uuid, bad_request'
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "403":
+          description: not_an_owner
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "404":
+          description: desk_not_found
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "500":
+          description: internal_server_error
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update desk info
+      tags:
+      - desks
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate user and return JWT token
+      parameters:
+      - description: Login credentials
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_features_users_transport_http.UsersRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully logged in
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.JWTResponse'
+        "400":
+          description: 'Possible: invalid_credentials, bad_request'
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "401":
+          description: invalid_password
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "404":
+          description: user_not_found
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "500":
+          description: internal_server_error
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+      summary: Login user
+      tags:
+      - users
+  /register:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user account with login, password and email
+      parameters:
+      - description: Register request body
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_features_users_transport_http.UsersRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Successfully registered user
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.JWTResponse'
+        "400":
+          description: 'Possible: invalid_email, password_too_short'
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "409":
+          description: 'Possible: user_already_exists, email_already_taken'
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "500":
+          description: internal_server_error
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+      summary: Register a new user
+      tags:
+      - users
+  /tasks/{id}:
+    delete:
+      consumes:
+      - application/json
+      description: Remove a task by its ID
+      parameters:
+      - description: TASK ID
+        example: '"550e8400-e29b-41d4-a716-446655440000"'
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'message: task with ID ... has been deleted'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'Possible: invalid_uuid, bad_request'
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "403":
+          description: not_an_owner
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "404":
+          description: task_not_found
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "500":
+          description: internal_server_error
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete task
+      tags:
+      - tasks
+  /tasks/{id}/complete:
+    patch:
+      consumes:
+      - application/json
+      description: Mark a specific task as done
+      parameters:
+      - description: TASK ID
+        example: '"550e8400-e29b-41d4-a716-446655440000"'
+        format: uuid
+        in: path
+        name: id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: 'message: task with ID ... has been completed'
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+        "400":
+          description: 'Possible: invalid_uuid, bad_request'
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "403":
+          description: not_a_desk_member
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "404":
+          description: task_not_found
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "409":
+          description: task_already_completed
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "500":
+          description: internal_server_error
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Complete task
+      tags:
+      - tasks
+  /tasks/{taskId}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve full information about a specific task by its ID.
+      parameters:
+      - description: Task UUID
+        example: '"550e8400-e29b-41d4-a716-446655440000"'
+        format: uuid
+        in: path
+        name: taskId
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Task information retrieved successfully
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_domain.Task'
+        "400":
+          description: 'Possible: invalid_uuid, bad_request'
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "403":
+          description: not_a_desk_member
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "404":
+          description: task_not_found
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "500":
+          description: internal_server_error
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get task details
+      tags:
+      - tasks
+  /tasks/all/{deskId}:
+    get:
+      consumes:
+      - application/json
+      description: Retrieve all tasks belonging to a specific desk with pagination
+        and status filtering.
+      parameters:
+      - description: Desk UUID
+        in: path
+        name: deskId
+        required: true
+        type: string
+      - description: Page number (1-100, default 1)
+        in: query
+        name: page
+        type: integer
+      - description: Tasks per page (1-50, default 20)
+        in: query
+        name: limit
+        type: integer
+      - description: Filter by task status (true/false)
+        enum:
+        - "true"
+        - "false"
+        in: query
+        name: done
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully retrieved list of tasks
+          schema:
+            items:
+              $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_domain.Task'
+            type: array
+        "400":
+          description: 'Possible: invalid_uuid, bad_request'
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "403":
+          description: not_a_desk_member
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "404":
+          description: desk_not_found
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "500":
+          description: internal_server_error
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Get desk tasks
+      tags:
+      - tasks
+  /tasks/create:
+    post:
+      consumes:
+      - application/json
+      description: Create a new task in a specific desk
+      parameters:
+      - description: Task Info
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_features_tasks_transport_http.TaskRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created Task
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_domain.Task'
+        "400":
+          description: 'Possible: task_name_too_short, invalid_desk_id'
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "404":
+          description: desk_not_found
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "500":
+          description: internal_server_error
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create a task
+      tags:
+      - tasks
+  /tasks/update:
+    patch:
+      consumes:
+      - application/json
+      description: Update task name, description or deadline
+      parameters:
+      - description: New task data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_features_tasks_transport_http.UpdateTaskRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Updated task
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_domain.Task'
+        "400":
+          description: 'Possible: invalid_deadline_format, task_name_too_short'
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "403":
+          description: not_a_desk_member
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "404":
+          description: task_not_found
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "500":
+          description: internal_server_error
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update task
+      tags:
+      - tasks
+  /users/update:
+    patch:
+      consumes:
+      - application/json
+      description: Update current user's name or email or password
+      parameters:
+      - description: New User Data
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/internal_features_users_transport_http.UsersRequestDTO'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Successfully updated user information
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_domain.User'
+        "400":
+          description: 'Possible: invalid_email, bad_request'
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "401":
+          description: unauthorized
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "404":
+          description: user_not_found
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "409":
+          description: email_already_exists
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+        "500":
+          description: internal_server_error
+          schema:
+            $ref: '#/definitions/N1ktarchik_Board_of_issues_internal_core_transport_response.ErrorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update user profile
+      tags:
+      - users
 securityDefinitions:
   ApiKeyAuth:
     description: 'Enter the token in the format: Bearer <JWT_TOKEN>'

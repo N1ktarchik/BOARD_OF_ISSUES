@@ -1,10 +1,10 @@
 package http
 
 import (
-	"Board_of_issuses/internal/core/domain"
-	core_errors "Board_of_issuses/internal/core/errors"
-	"Board_of_issuses/internal/core/transport/request"
-	resp "Board_of_issuses/internal/core/transport/response"
+	"N1ktarchik/Board_of_issues/internal/core/domain"
+	core_errors "N1ktarchik/Board_of_issues/internal/core/errors"
+	"N1ktarchik/Board_of_issues/internal/core/transport/request"
+	resp "N1ktarchik/Board_of_issues/internal/core/transport/response"
 	"log/slog"
 
 	"net/http"
@@ -12,6 +12,19 @@ import (
 	"github.com/google/uuid"
 )
 
+// CreateDesk           godoc
+// @Summary             Create a desk
+// @Description         Create a new board for tasks
+// @Tags                desks
+// @Security            ApiKeyAuth
+// @Accept              json
+// @Produce             json
+// @Param               request body DeskRequestDTO true "Desk Info"
+// @Success             201 {object} domain.Desk "Successfully created desk"
+// @Failure             400 {object} resp.ErrorResponse "Possible: desk_name_too_short, invalid_data"
+// @Failure             401 {object} resp.ErrorResponse "unauthorized"
+// @Failure             500 {object} resp.ErrorResponse "internal_server_error"
+// @Router              /desks/create [post]
 func (h *DesksHandler) CreateDesk(w http.ResponseWriter, r *http.Request) {
 	h.log.Info("new request", slog.String("path", "/desks/create"))
 

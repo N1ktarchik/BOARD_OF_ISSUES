@@ -1,8 +1,8 @@
 package repository
 
 import (
-	"Board_of_issuses/internal/core/domain"
-	core_errors "Board_of_issuses/internal/core/errors"
+	"N1ktarchik/Board_of_issues/internal/core/domain"
+	core_errors "N1ktarchik/Board_of_issues/internal/core/errors"
 	"context"
 	"errors"
 	"fmt"
@@ -31,12 +31,6 @@ func (r *DesksRepository) ChangeDesksData(ctx context.Context, deskUpdate *domai
 	if deskUpdate.Password != "" {
 		setValues = append(setValues, fmt.Sprintf("password = $%d", argID))
 		args = append(args, deskUpdate.Password)
-		argID++
-	}
-
-	if deskUpdate.OwnerId != uuid.Nil {
-		setValues = append(setValues, fmt.Sprintf("owner_id = $%d", argID))
-		args = append(args, deskUpdate.OwnerId)
 		argID++
 	}
 

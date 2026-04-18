@@ -4,14 +4,29 @@ package http
 //доработать функцию!
 
 import (
-	"Board_of_issuses/internal/core/domain"
-	"Board_of_issuses/internal/core/errors"
-	req "Board_of_issuses/internal/core/transport/request"
-	resp "Board_of_issuses/internal/core/transport/response"
+	"N1ktarchik/Board_of_issues/internal/core/domain"
+	"N1ktarchik/Board_of_issues/internal/core/errors"
+	req "N1ktarchik/Board_of_issues/internal/core/transport/request"
+	resp "N1ktarchik/Board_of_issues/internal/core/transport/response"
 	"log/slog"
 	"net/http"
 )
 
+// ConnectUserToDesk        godoc
+// @Summary                 Join a desk
+// @Description             Connect current user to a desk using desk password
+// @Tags                    desks
+// @Security                ApiKeyAuth
+// @Accept                  json
+// @Produce                 json
+// @Param                   request body DeskRequestDTO true "Desk ID and Password"
+// @Success                 201 {object} map[string]string "message: you have connected to desk"
+// @Failure                 400 {object} resp.ErrorResponse "Possible: invalid_data, bad_request"
+// @Failure                 401 {object} resp.ErrorResponse "unauthorized"
+// @Failure                 404 {object} resp.ErrorResponse "desk_not_found"
+// @Failure                 409 {object} resp.ErrorResponse "already_a_member"
+// @Failure                 500 {object} resp.ErrorResponse "internal_server_error"
+// @Router                  /desks/connect [post]
 func (h *DesksHandler) ConnectUserToDesk(w http.ResponseWriter, r *http.Request) {
 	h.log.Info("new request", slog.String("path", "/desks/connect"))
 

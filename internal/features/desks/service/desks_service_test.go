@@ -1,7 +1,7 @@
 package service
 
 import (
-	"Board_of_issuses/internal/core/domain"
+	"N1ktarchik/Board_of_issues/internal/core/domain"
 	"context"
 	"errors"
 	"io"
@@ -11,7 +11,7 @@ import (
 	"github.com/google/uuid"
 	"go.uber.org/mock/gomock"
 
-	"Board_of_issuses/internal/features/desks/service/mocks"
+	"N1ktarchik/Board_of_issues/internal/features/desks/service/mocks"
 )
 
 func initTest(t *testing.T) (*DesksService, *mocks.MockDeskRepository, context.Context) {

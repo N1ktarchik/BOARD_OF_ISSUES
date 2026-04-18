@@ -1,19 +1,19 @@
 package transport
 
 import (
-	"Board_of_issuses/internal/core/errors"
+	"N1ktarchik/Board_of_issues/internal/core/errors"
 	"encoding/json"
 	"net/http"
 )
 
 type JWTResponse struct {
-	Token string `json:"token"`
+	Token string `json:"token" example:"any JWT-Token"`
 }
 
 type ErrorResponse struct {
-	Code    int    `json:"code" example:"400"`
-	Error   string `json:"error" example:"USER_NOT_FOUND"`
-	Message string `json:"message,omitempty" example:"Detailed description"`
+	Code    int    `json:"code" example:"0"`
+	Error   string `json:"error" example:"any string-code of error"`
+	Message string `json:"message,omitempty" example:"any error message"`
 }
 
 func RespondWithJSON(w http.ResponseWriter, code int, payload any) {
@@ -44,12 +44,11 @@ func RespondWithError(w http.ResponseWriter, err error) {
 	if appErr, ok := errors.IsErrorApp(err); ok {
 		RespondWithJSON(w, appErr.StatusCode(), ErrorResponse{
 			Code:    appErr.StatusCode(),
-			Error:   appErr.Code,   
+			Error:   appErr.Code,
 			Message: appErr.Message,
 		})
 		return
 	}
-
 
 	RespondWithJSON(w, http.StatusInternalServerError, ErrorResponse{
 		Code:    http.StatusInternalServerError,

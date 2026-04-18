@@ -1,8 +1,8 @@
 package auth
 
 import (
-	"Board_of_issuses/internal/core/domain"
-	"Board_of_issuses/internal/core/errors"
+	"N1ktarchik/Board_of_issues/internal/core/domain"
+	"N1ktarchik/Board_of_issues/internal/core/errors"
 	"log/slog"
 	"time"
 

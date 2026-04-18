@@ -1,4 +1,4 @@
-module Board_of_issuses
+module N1ktarchik/Board_of_issues
 
 go 1.25.1
 

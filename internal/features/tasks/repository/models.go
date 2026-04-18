@@ -1,7 +1,7 @@
 package repository
 
 import (
-	"Board_of_issuses/internal/core/domain"
+	"N1ktarchik/Board_of_issues/internal/core/domain"
 	"time"
 
 	"github.com/google/uuid"

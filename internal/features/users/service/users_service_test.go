@@ -6,9 +6,9 @@ import (
 	"log/slog"
 	"testing"
 
-	"Board_of_issuses/internal/core/domain"
-	core_errors "Board_of_issuses/internal/core/errors"
-	"Board_of_issuses/internal/features/users/service/mocks"
+	"N1ktarchik/Board_of_issues/internal/core/domain"
+	core_errors "N1ktarchik/Board_of_issues/internal/core/errors"
+	"N1ktarchik/Board_of_issues/internal/features/users/service/mocks"
 
 	"github.com/google/uuid"
 	"go.uber.org/mock/gomock"

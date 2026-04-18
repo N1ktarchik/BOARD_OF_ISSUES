@@ -1,9 +1,9 @@
 package server
 
 import (
-	"Board_of_issuses/internal/core/domain"
-	"Board_of_issuses/internal/core/errors"
-	resp "Board_of_issuses/internal/core/transport/response"
+	"N1ktarchik/Board_of_issues/internal/core/domain"
+	"N1ktarchik/Board_of_issues/internal/core/errors"
+	resp "N1ktarchik/Board_of_issues/internal/core/transport/response"
 	"context"
 	"log/slog"
 	"net/http"
