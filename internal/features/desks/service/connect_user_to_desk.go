@@ -12,12 +12,12 @@ func (s *DesksService) ConnectUserToDesk(ctx context.Context, userID, deskID uui
 	s.log.Info("connecting user to desk", slog.Any("deskID", deskID), slog.Any("userID", userID))
 
 	if userID == uuid.Nil {
-		s.log.Error("connect user to desk failed: empty user id")
+		s.log.Warn("connect user to desk failed: empty user id")
 		return core_errors.BadRequest()
 	}
 
 	if deskID == uuid.Nil {
-		s.log.Error("connect user to desk failed: empty desk id")
+		s.log.Warn("connect user to desk failed: empty desk id")
 		return core_errors.BadRequest()
 	}
 	

@@ -11,7 +11,7 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func (h *TasksHandler) HandleDeleteTask(w http.ResponseWriter, r *http.Request) {
+func (h *TasksHandler)DeleteTask(w http.ResponseWriter, r *http.Request) {
 	h.log.Info("new request", slog.String("path", "/tasks/{id}"),
 		slog.String("method", http.MethodDelete))
 
@@ -25,16 +25,10 @@ func (h *TasksHandler) HandleDeleteTask(w http.ResponseWriter, r *http.Request) 
 
 	taskID, ok := mux.Vars(r)["id"]
 	if !ok {
-		h.log.Error("delete task failed: task id not found in URL")
+		h.log.Warn("delete task failed: task id not found in URL")
 		resp.RespondWithError(w, core_errors.BadRequest())
 		return
 	}
-
-	//To service
-	// if taskID <= 0 {
-	// 	RespondWithError(w, http.StatusBadRequest, "desk_id can not be less than or equal to zero")
-	// 	return
-	// }
 
 	if err := h.tasksService.DeleteTask(ctx, taskID, userId); err != nil {
 		h.log.Error("delete task failed: service error",

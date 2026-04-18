@@ -25,7 +25,7 @@ func (e *ErrorApp) StatusCode() int {
 		return http.StatusBadRequest
 	case "USER_ALREADY_REGISTERED", "EMAIL_ALREADY_REGISTERED":
 		return http.StatusConflict
-	case "USER_NOT_FOUND", "DESK_NOT_FOUND":
+	case "USER_NOT_FOUND", "DESK_NOT_FOUND", "TASK_NOT_FOUND":
 		return http.StatusNotFound
 	default:
 		return http.StatusInternalServerError
@@ -82,24 +82,32 @@ func TooLongPassword() *ErrorApp {
 	}
 }
 
-func UserNotOwnerOfDesk(userID, deskID int) *ErrorApp {
+func UserNotOwnerOfDesk(userID, deskID string) *ErrorApp {
 	return &ErrorApp{
 		Code:    "USER_IS_NOT_OWNER",
-		Message: fmt.Sprintf("User with id %d is not owner of desk with id %d", userID, deskID),
+		Message: fmt.Sprintf("User with id %s is not owner of desk with id %s", userID, deskID),
 	}
 }
 
-func UserHaveNotAccesToDesk(userID, deskID int) *ErrorApp {
+func UserHaveNotAccessToDesk(userID, deskID string) *ErrorApp {
+	if len(deskID) != 0 {
+		return &ErrorApp{
+			Code:    "USER_HAVE_NOT_ACCES",
+			Message: fmt.Sprintf("User with id %s have not acces to desk with id %s", userID, deskID),
+		}
+	}
+
 	return &ErrorApp{
 		Code:    "USER_HAVE_NOT_ACCES",
-		Message: fmt.Sprintf("User with id %d have not acces to desk with id %d", userID, deskID),
+		Message: fmt.Sprintf("User with id %s have not acces to desk", userID),
 	}
+
 }
 
-func UserNotOwnerOfTask(userID, taskID int) *ErrorApp {
+func UserNotOwnerOfTask(userID, taskID string) *ErrorApp {
 	return &ErrorApp{
 		Code:    "USER_IS_NOT_OWNER_OF_TASK",
-		Message: fmt.Sprintf("User with id %d is not owner of taks with id %d", userID, taskID),
+		Message: fmt.Sprintf("User with id %s is not owner of taks with id %s", userID, taskID),
 	}
 }
 
@@ -142,5 +150,12 @@ func DeskNotFound() *ErrorApp {
 	return &ErrorApp{
 		Code:    "DESK_NOT_FOUND",
 		Message: "desk not found",
+	}
+}
+
+func TaskNotFound() *ErrorApp {
+	return &ErrorApp{
+		Code:    "TASK_NOT_FOUND",
+		Message: "task not found",
 	}
 }

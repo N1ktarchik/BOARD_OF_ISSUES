@@ -1,0 +1,15 @@
+basePath: /
+host: localhost:8080
+info:
+  contact: {}
+  description: Golang Board Of Issuses API
+  title: Board Of Issuses
+  version: "2.0"
+paths: {}
+securityDefinitions:
+  ApiKeyAuth:
+    description: 'Enter the token in the format: Bearer <JWT_TOKEN>'
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"

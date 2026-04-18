@@ -14,11 +14,11 @@ func (s *DesksService) GetAllUsersDesks(ctx context.Context, userID string) ([]d
 
 	userUUID, err := uuid.Parse(userID)
 	if err != nil {
-		s.log.Error("get all users desks failed: error parsing user id", slog.Any("err", err))
+		s.log.Warn("get all users desks failed: error parsing user id", slog.Any("err", err))
 		return nil, core_errors.BadRequest()
 	}
 	if userUUID == uuid.Nil {
-		s.log.Error("get all users desks failed: empty user id")
+		s.log.Warn("get all users desks failed: empty user id")
 		return nil, core_errors.BadRequest()
 	}
 

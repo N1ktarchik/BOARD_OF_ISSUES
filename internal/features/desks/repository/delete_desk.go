@@ -1,6 +1,7 @@
 package repository
 
 import (
+	core_errors "Board_of_issuses/internal/core/errors"
 	"context"
 	"log/slog"
 
@@ -12,10 +13,17 @@ func (r *DesksRepository) DeleteDesk(ctx context.Context, userUUID, deskUUID uui
 
 	query := `DELETE FROM desks WHERE id = $1 AND owner_id = $2`
 
-	if _, err := r.pool.Exec(ctx, query, deskUUID, userUUID); err != nil {
+	result, err := r.pool.Exec(ctx, query, deskUUID, userUUID)
+	if err != nil {
 		r.log.Error("failed to delete desk in repository",
 			slog.Any("deskID", deskUUID), slog.Any("userID", userUUID), slog.Any("err", err))
-		return err
+		return core_errors.ServerError()
+	}
+
+	if result.RowsAffected() == 0 {
+		r.log.Warn("user not owner of desk", slog.Any("userID", userUUID), slog.Any("deskID", deskUUID))
+
+		return core_errors.UserNotOwnerOfDesk(userUUID.String(), deskUUID.String())
 	}
 
 	r.log.Info("desk deleted successfully in repository", slog.Any("deskID", deskUUID))
