@@ -31,7 +31,7 @@ func (h *UsersHandler) ChangesUserData(w http.ResponseWriter, r *http.Request) {
 
 	userUUID, err := uuid.Parse(userIdStr)
 	if err != nil {
-		h.log.Error("parse userID failed", slog.Any("err", err))
+		h.log.Warn("parse userID failed", slog.Any("err", err))
 		resp.RespondWithError(w, core_errors.BadRequest())
 		return
 	}

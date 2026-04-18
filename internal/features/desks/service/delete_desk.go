@@ -13,21 +13,21 @@ func (s *DesksService) DeleteDesk(ctx context.Context, deskID, userID string) er
 
 	userUUID, err := uuid.Parse(userID)
 	if err != nil {
-		s.log.Error("delete desk failed: error parsing user id", slog.Any("err", err))
+		s.log.Warn("delete desk failed: error parsing user id", slog.Any("err", err))
 		return core_errors.BadRequest()
 	}
 	if userUUID == uuid.Nil {
-		s.log.Error("delete desk failed: empty user id")
+		s.log.Warn("delete desk failed: empty user id")
 		return core_errors.BadRequest()
 	}
 
 	deskUUID, err := uuid.Parse(deskID)
 	if err != nil {
-		s.log.Error("delete desk failed: error parsing desk id", slog.Any("userID", userUUID), slog.Any("err", err))
+		s.log.Warn("delete desk failed: error parsing desk id", slog.Any("userID", userUUID), slog.Any("err", err))
 		return core_errors.BadRequest()
 	}
 	if deskUUID == uuid.Nil {
-		s.log.Error("delete desk failed: empty desk id", slog.Any("userID", userUUID))
+		s.log.Warn("delete desk failed: empty desk id", slog.Any("userID", userUUID))
 		return core_errors.BadRequest()
 	}
 

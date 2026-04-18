@@ -15,7 +15,7 @@ const (
 )
 
 type AuthService interface {
-	CreateJWT(userID string, role string) (string, error)
+	CreateJWT(userID string) (string, error)
 	GetUserIdFromJWT(JWT string) (string, error)
 	ValidateJWT(JWT string) (*domain.Claims, error)
 }
@@ -59,7 +59,7 @@ func (m *MiddleWare) AuthMiddleware(next http.Handler) http.Handler {
 
 		ctx := context.WithValue(r.Context(), UserIDKey, claims.ID)
 
-		m.log.Debug("auth middleware: user authenticated",slog.String("user_id", claims.ID),)
+		m.log.Debug("auth middleware: user authenticated", slog.String("user_id", claims.ID))
 
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})

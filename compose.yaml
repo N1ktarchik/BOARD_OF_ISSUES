@@ -1,43 +1,58 @@
 services:
   app:
-    build: .
-    container_name: app-container
+    build:
+      context: .
+      dockerfile: cmd/BoOfIs-app/Dockerfile
+    container_name: BoOfIs-app
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+      - POSTGRES_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable
+      - SECRET_KEY=${SECRET_KEY}
+      - JWT_LIVE_TIME=${JWT_LIVE_TIME}
     ports:
       - "8080:8080"
-    env_file:
-      - .env
     depends_on:
-      db:
-          condition: service_healthy
+      postgres:
+        condition: service_healthy
+      postgres-migrate:
+        condition: service_completed_successfully
+    restart: always
 
-  db:
-    image: postgres:16
-    container_name: postgres-db
+  postgres:
+    image: postgres:17-bookworm
+    container_name: BoOfIs-app-env-postgres
     environment:
-      - POSTGRES_USER=${DB_USER}
-      - POSTGRES_PASSWORD=${DB_PASSWORD}
-      - POSTGRES_DB=${DB_NAME}
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
-      - postgres-db:/var/lib/postgresql/data
-    healthcheck: 
-      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      - ./out/pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-booking_app}"]
       interval: 5s
       timeout: 5s
       retries: 5
-
-  test:
-    build: .
-    container_name: test-runner
-    env_file:
-      - .env
+    restart: always
+  postgres-migrate:
+    image: migrate/migrate:v4.19.1
+    volumes:
+      - ./migrations:/migrations 
+    command:
+      - -path=/migrations/
+      - -database=postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable
+      - up
+    restart: on-failure:5
     depends_on:
-      db:
-          condition: service_healthy
-    command: go test -v ./... 
-    profiles:
-      - testing
-
-volumes:
-  postgres-db:
+      postgres:
+        condition: service_healthy
+  swagger:
+    build:
+      context: .
+      dockerfile: swagger.Dockerfile
+    volumes:
+      - .:/code

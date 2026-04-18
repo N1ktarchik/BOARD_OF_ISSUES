@@ -13,14 +13,20 @@ func (s *DesksService) ChangeDesksData(ctx context.Context, deskUpdate *domain.D
 	s.log.Info("changing desk data", slog.Any("deskID", deskUpdate.Id), slog.Any("userID", deskUpdate.OwnerId))
 
 	if deskUpdate.Name != "" && len(deskUpdate.Name) < 3 {
-		s.log.Error("change desk data failed: short desk name", slog.Any("deskName", deskUpdate.Name),
+		s.log.Warn("change desk data failed: short desk name", slog.Any("deskName", deskUpdate.Name),
 			slog.Any("deskID", deskUpdate.Id), slog.Any("userID", deskUpdate.OwnerId))
 
 		return nil, core_errors.BadRequest()
 	}
 
+	if deskUpdate.Id == uuid.Nil {
+		s.log.Warn("change desk data failed: desk id is nil", slog.Any("requester id", requesterID))
+
+		return nil, core_errors.BadRequest()
+	}
+
 	if requesterID == uuid.Nil {
-		s.log.Error("change desk data failed: empty requester id", slog.Any("deskID", deskUpdate.Id),
+		s.log.Warn("change desk data failed: empty requester id", slog.Any("deskID", deskUpdate.Id),
 			slog.Any("userID", deskUpdate.OwnerId))
 
 		return nil, core_errors.BadRequest()
@@ -29,7 +35,7 @@ func (s *DesksService) ChangeDesksData(ctx context.Context, deskUpdate *domain.D
 	if deskUpdate.Password != "" {
 		hashPassword, err := domain.Hash(deskUpdate.Password)
 		if err != nil {
-			s.log.Error("change desk data failed: password hashing error", slog.Any("err", err))
+			s.log.Warn("change desk data failed: password hashing error", slog.Any("err", err))
 			return nil, err
 		}
 

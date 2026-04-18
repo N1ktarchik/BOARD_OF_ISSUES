@@ -12,13 +12,13 @@ import (
 func (s *UsersService) RegisterUser(ctx context.Context, user *domain.User) (string, error) {
 
 	if user.Login == "" || user.Password == "" || user.Email == "" || user.Name == "" {
-		s.log.Error("register failed: invalid user data")
+		s.log.Warn("register failed: invalid user data")
 		return "", core_errors.BadRequest()
 	}
 
 	hashPassword, err := domain.Hash(user.Password)
 	if err != nil {
-		s.log.Error("register failed: password hashing error", slog.Any("err", err))
+		s.log.Warn("register failed: password hashing error", slog.Any("err", err))
 		return "", err
 	}
 

@@ -12,7 +12,7 @@ import (
 	"github.com/google/uuid"
 )
 
-func (h *TasksHandler) HandleCreateTask(w http.ResponseWriter, r *http.Request) {
+func (h *TasksHandler) CreateTask(w http.ResponseWriter, r *http.Request) {
 
 	h.log.Info("new request", slog.String("path", "/tasks/create"))
 
@@ -31,26 +31,13 @@ func (h *TasksHandler) HandleCreateTask(w http.ResponseWriter, r *http.Request) 
 		return
 	}
 
-	///To service
-	// if task.DeskId <= 0 {
-	// 	RespondWithError(w, http.StatusBadRequest, "task id can not be less than or equal to zero ")
-	// }
-
-	// if len(task.Name) < 3 {
-	// 	RespondWithError(w, http.StatusBadRequest, "length name can not be less than 3 ")
-	// 	return
-	// }
-
-	// if task.Time.IsZero() {
-	// 	task.Time = time.Now().Add(30 * 24 * time.Hour)
-	// }
-
 	authorUUID, err := uuid.Parse(authorIdStr)
 	if err != nil {
-		h.log.Error("create task failed: error parsing author id", slog.Any("err", err))
+		h.log.Warn("create task failed: error parsing author id", slog.Any("err", err))
 		resp.RespondWithError(w, core_errors.BadRequest())
 		return
 	}
+
 	task.Done = false
 	task.AuthorId = authorUUID
 

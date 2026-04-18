@@ -11,6 +11,8 @@ import (
 )
 
 func (r *UsersRepository) GetUser(ctx context.Context, email, login string) (*domain.User, error) {
+	r.log.Info("getting user", slog.String("email", email), slog.String("login", login))
+
 	query := `SELECT id,login,password,email,name,created_at FROM users WHERE login = $1 OR email = $2`
 
 	row := r.pool.QueryRow(ctx, query, login, email)
@@ -18,7 +20,7 @@ func (r *UsersRepository) GetUser(ctx context.Context, email, login string) (*do
 	userModel := userModel{}
 	if err := userModel.scan(row); err != nil {
 		if errors.Is(err, pgx.ErrNoRows) {
-			r.log.Error("user not found", slog.String("email", email), slog.String("login", login))
+			r.log.Warn("user not found", slog.String("email", email), slog.String("login", login))
 			return nil, core_errors.UserNotFound()
 		}
 

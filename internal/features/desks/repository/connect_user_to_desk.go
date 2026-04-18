@@ -20,7 +20,7 @@ func (r *DesksRepository) ConnectUserToDesk(ctx context.Context, userID, deskID 
 		var pgErr *pgconn.PgError
 		if errors.As(err, &pgErr) {
 			if pgErr.Code == pgForeignKeyViolation {
-				r.log.Error("failed to connect user to desk: desk not found", slog.Any("err", err))
+				r.log.Warn("failed to connect user to desk: desk not found", slog.Any("err", err))
 
 				return core_errors.DeskNotFound()
 			}

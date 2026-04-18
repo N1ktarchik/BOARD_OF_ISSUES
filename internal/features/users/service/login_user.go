@@ -10,7 +10,7 @@ import (
 func (s *UsersService) LoginUser(ctx context.Context, user *domain.User) (string, error) {
 
 	if user.Password == "" || (user.Email == "" && user.Login == "") {
-		s.log.Error("login failed: empty credentials")
+		s.log.Warn("login failed: empty credentials")
 
 		return "", core_errors.BadRequest()
 	}
@@ -22,7 +22,7 @@ func (s *UsersService) LoginUser(ctx context.Context, user *domain.User) (string
 	}
 
 	if !domain.Compare(user.Password, repoUser.Password) {
-		s.log.Error("login failed: wrong password")
+		s.log.Warn("login failed: wrong password")
 		return "", core_errors.InvalidPassword()
 	}
 

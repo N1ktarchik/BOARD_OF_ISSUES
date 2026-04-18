@@ -12,9 +12,9 @@ import (
 	"github.com/gorilla/mux"
 )
 
-func (h *TasksHandler) GetAllTasks(w http.ResponseWriter, r *http.Request) {
+func (h *TasksHandler) GetTasksFromOneDesk(w http.ResponseWriter, r *http.Request) {
 
-	h.log.Info("new request", slog.String("path", "/tasks/{deskId}"))
+	h.log.Info("new request", slog.String("path", "/tasks/all/{deskId}"))
 
 	tasksFilter := &domain.TaskFilter{}
 
@@ -27,7 +27,7 @@ func (h *TasksHandler) GetAllTasks(w http.ResponseWriter, r *http.Request) {
 
 	userUUID, err := uuid.Parse(userIdStr)
 	if err != nil {
-		h.log.Error("get all tasks failed: error parsing user id", slog.Any("err", err))
+		h.log.Warn("get all tasks failed: error parsing user id", slog.Any("err", err))
 		resp.RespondWithError(w, core_errors.BadRequest())
 		return
 	}
@@ -35,14 +35,14 @@ func (h *TasksHandler) GetAllTasks(w http.ResponseWriter, r *http.Request) {
 
 	deskIdStr, ok := mux.Vars(r)["deskId"]
 	if !ok {
-		h.log.Error("get all tasks failed: desk id not found in URL")
+		h.log.Warn("get all tasks failed: desk id not found in URL")
 		resp.RespondWithError(w, core_errors.BadRequest())
 		return
 	}
 
 	deskUUID, err := uuid.Parse(deskIdStr)
 	if err != nil {
-		h.log.Error("get all tasks failed: error parsing desk id", slog.Any("err", err))
+		h.log.Warn("get all tasks failed: error parsing desk id", slog.Any("err", err))
 		resp.RespondWithError(w, core_errors.BadRequest())
 		return
 	}
@@ -76,12 +76,7 @@ func (h *TasksHandler) GetAllTasks(w http.ResponseWriter, r *http.Request) {
 		tasksFilter.Done = nil
 	}
 
-	// if deskID <= 0 {
-	// 	RespondWithError(w, http.StatusBadRequest, "desk_id can not be less than or equal to zero")
-	// 	return
-	// }
-
-	tasks, err := h.tasksService.GetTasks(r.Context(), tasksFilter)
+	tasks, err := h.tasksService.GetTasksFromOneDesk(r.Context(), tasksFilter)
 	if err != nil {
 		h.log.Error("get all tasks failed: service error",
 			slog.Any("err", err), slog.Any("desk_id", deskIdStr),
@@ -94,4 +89,37 @@ func (h *TasksHandler) GetAllTasks(w http.ResponseWriter, r *http.Request) {
 	h.log.Info("tasks retrieved successfully", slog.Any("desk_id", deskIdStr), slog.Any("user_id", userIdStr))
 
 	resp.RespondWithArray(w, http.StatusOK, "task", tasks)
+}
+
+func (h *TasksHandler) GetTaskByID(w http.ResponseWriter, r *http.Request) {
+
+	h.log.Info("new request", slog.String("path", "/tasks/{taskId}"))
+
+	taskIdStr, ok := mux.Vars(r)["taskId"]
+	if !ok {
+		h.log.Warn("get task by id failed: task id not found in URL")
+		resp.RespondWithError(w, core_errors.BadRequest())
+		return
+	}
+
+	userIdStr, ok := domain.GetUserID(r.Context())
+	if !ok {
+		h.log.Error("get task by id failed: userID not found in context")
+		resp.RespondWithError(w, core_errors.BadRequest())
+		return
+	}
+
+	task, err := h.tasksService.GetTaskByID(r.Context(), taskIdStr, userIdStr)
+	if err != nil {
+		h.log.Error("get task by id failed: service error",
+			slog.Any("err", err), slog.Any("task_id", taskIdStr),
+			slog.Any("user_id", userIdStr))
+
+		resp.RespondWithError(w, err)
+		return
+	}
+
+	h.log.Info("task retrieved successfully", slog.Any("task_id", taskIdStr), slog.Any("user_id", userIdStr))
+
+	resp.RespondWithJSON(w, http.StatusOK, task)
 }

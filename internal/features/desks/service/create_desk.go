@@ -14,18 +14,18 @@ func (s *DesksService) CreateDesk(ctx context.Context, desk *domain.Desk) (*doma
 	s.log.Info("creating desk", slog.Any("deskName", desk.Name), slog.Any("ownerID", desk.OwnerId))
 
 	if len(desk.Name) < 3 {
-		s.log.Error("create desk failed: short desk name", slog.Any("deskName", desk.Name))
+		s.log.Warn("create desk failed: short desk name", slog.Any("deskName", desk.Name))
 		return nil, core_errors.BadRequest()
 	}
 
 	if desk.OwnerId == uuid.Nil {
-		s.log.Error("create desk failed: empty owner id")
+		s.log.Warn("create desk failed: empty owner id")
 		return nil, core_errors.BadRequest()
 	}
 
 	hashPassword, err := domain.Hash(desk.Password)
 	if err != nil {
-		s.log.Error("create desk failed: password hashing error", slog.Any("err", err))
+		s.log.Warn("create desk failed: password hashing error", slog.Any("err", err))
 		return nil, err
 	}
 

@@ -18,6 +18,24 @@ type TaskRequestDTO struct {
 	Created_at  time.Time `json:"created_at" example:"2023-10-10T10:00:00Z"`
 }
 
+type UpdateTaskRequestDTO struct {
+	Id          uuid.UUID `json:"id" example:"123e4567-e89b-12d3-a456-426614174000"`
+	AuthorId    uuid.UUID `json:"author_id" example:"636e856-e12b-56d9-f987-333222561234"`
+	Name        string    `json:"name" example:"Task name"`
+	Description string    `json:"description" example:"Task description"`
+	Deadline    time.Time `json:"deadline" example:"2023-10-10T10:00:00Z"`
+}
+
+func (u *UpdateTaskRequestDTO) ToServiceUpdateTask() *domain.UpdateTask {
+	return &domain.UpdateTask{
+		Id:          u.Id,
+		AuthorId:    u.AuthorId,
+		Name:        u.Name,
+		Description: u.Description,
+		Deadline:    u.Deadline,
+	}
+}
+
 func (t *TaskRequestDTO) ToServiceTask() *domain.Task {
 	return &domain.Task{
 		Id:          t.Id,

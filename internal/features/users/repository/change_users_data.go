@@ -14,6 +14,7 @@ import (
 )
 
 func (r *UsersRepository) ChangeUsersData(ctx context.Context, user *domain.User) (*domain.User, error) {
+	r.log.Info("updating users data", slog.Any("id", user.ID))
 
 	query := "UPDATE users SET "
 	var args []any
@@ -40,7 +41,6 @@ func (r *UsersRepository) ChangeUsersData(ctx context.Context, user *domain.User
 	args = append(args, user.ID)
 	query += " RETURNING id, login, password, email, name, created_at"
 
-
 	var model userModel
 	row := r.pool.QueryRow(ctx, query, args...)
 
@@ -50,7 +50,7 @@ func (r *UsersRepository) ChangeUsersData(ctx context.Context, user *domain.User
 		if errors.As(err, &pgErr) {
 			if pgErr.Code == pgerrcode.UniqueViolation {
 
-				r.log.Error("change users data failed : email already registered",
+				r.log.Warn("change users data failed : email already registered",
 					slog.String("email", user.Email))
 
 				return nil, core_errors.EmailAlreadyRegistered(user.Email)

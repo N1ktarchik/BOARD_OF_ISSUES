@@ -11,6 +11,8 @@ import (
 )
 
 func (r *UsersRepository) CreateUser(ctx context.Context, user *domain.User) error {
+	r.log.Info("creating user", slog.Any("id", user.ID), slog.Any("name", user.Name))
+
 	query := `
 	INSERT INTO users (id,login, password, email, name) 
 	VALUES ($1, $2, $3, $4,$5) `
@@ -21,7 +23,7 @@ func (r *UsersRepository) CreateUser(ctx context.Context, user *domain.User) err
 		var pgErr *pgconn.PgError
 
 		if errors.As(err, &pgErr) && pgErr.Code == pgUniqueViolation {
-			r.log.Error("user already registered", slog.String("email", user.Email), slog.String("login", user.Login))
+			r.log.Warn("user already registered", slog.String("email", user.Email), slog.String("login", user.Login))
 			return core_errors.UserAlreadyRegistered(user.Login, user.Email)
 		}
 
