@@ -8,7 +8,6 @@ import (
 	httpSwagger "github.com/swaggo/http-swagger/v2"
 
 	"N1ktarchik/Board_of_issues/docs"
-	
 )
 
 type Server struct {
@@ -46,7 +45,7 @@ func (s *Server) RegisterSwagger() {
 
 	s.Router.HandleFunc("/swagger/doc.json", func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		w.Write([]byte(docs.SwaggerInfo.ReadDoc()))
+		_, _ = w.Write([]byte(docs.SwaggerInfo.ReadDoc()))
 	}).Methods("GET")
 
 	s.log.Info("swagger have registred")

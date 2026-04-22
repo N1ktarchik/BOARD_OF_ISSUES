@@ -13,7 +13,7 @@ func DecodeAndValidateRequest(r *http.Request, userData any) error {
 		return core_errors.ServerError()
 	}
 
-	defer r.Body.Close()
+	defer func() { _ = r.Body.Close() }()
 
 	if len(reqData) == 0 {
 		return core_errors.BadRequest()

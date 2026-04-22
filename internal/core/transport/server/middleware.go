@@ -10,10 +10,6 @@ import (
 	"strings"
 )
 
-const (
-	UserIDKey string = "userID"
-)
-
 type AuthService interface {
 	CreateJWT(userID string) (string, error)
 	GetUserIdFromJWT(JWT string) (string, error)
@@ -57,7 +53,7 @@ func (m *MiddleWare) AuthMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		ctx := context.WithValue(r.Context(), UserIDKey, claims.ID)
+		ctx := context.WithValue(r.Context(), domain.UserIDKey, claims.ID)
 
 		m.log.Debug("auth middleware: user authenticated", slog.String("user_id", claims.ID))
 

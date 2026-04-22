@@ -22,7 +22,9 @@ func (r *DesksRepository) CreateDesk(ctx context.Context, desk *domain.Desk) (*d
 		return nil, core_errors.ServerError()
 	}
 
-	defer tx.Rollback(ctx)
+	defer func() {
+		_ = tx.Rollback(ctx)
+	}()
 
 	row := tx.QueryRow(ctx, query1, desk.Id, desk.Name, desk.Password, desk.OwnerId)
 	createdDesk := deskModel{}
